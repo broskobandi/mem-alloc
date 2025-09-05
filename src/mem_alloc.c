@@ -1,31 +1,44 @@
 #include "mem_alloc_utils.h"
+#include "mem_alloc.h"
+#include <stdalign.h>
+#include <stdbool.h>
+#include <sys/mman.h>
+
+#define NUM_ARENAS 32
+#define ROUNDUP(size)\
+	(((size) + alignof(max_align_t) - 1) & ~(alignof(max_align_t) - 1))
+#define DATA_OFFSET\
+	ROUNDUP(sizeof(ptr_t))
+#define MIN_ALLOC_SIZE alignof(max_align_t)
+#define ARENA_SIZE 1024LU * 128
+#define NUM_PTR_SIZE_CLASSES\
+	(ARENA_SIZE - DATA_OFFSET) / MIN_ALLOC_SIZE
+
+typedef struct ptr ptr_t;
+struct ptr {
+	void *data;
+	size_t total_mem;
+	ptr_t *next_free;
+	ptr_t *prev_free;
+	bool is_valid;
+	bool is_mmap;
+};
+
+typedef struct arena {
+	alignas(max_align_t) unsigned char buff[ARENA_SIZE];
+	ptr_t *free_ptr_tails[NUM_PTR_SIZE_CLASSES];
+	size_t offset;
+} arena_t;
+#define PTR_SIZE_CLASS(size)\
+	(size) / MIN_ALLOC_SIZE 
+
+_Thread_local static arena_t g_arena;
 
 void *mem_alloc(size_t size) {
-	ptr_t *ptr = NULL;
-	size_t size_to_alloc = DATA_OFFSET + ROUNDUP(size);
-	if (g_arena.offset + size_to_alloc <= ARENA_SIZE) {
-		if (g_arena.free_ptr_tails[PTR_SIZE_CLASS(size_to_alloc)]) {
-			ptr = g_arena.free_ptr_tails[PTR_SIZE_CLASS(size_to_alloc)];
-			if (ptr->prev_free)
-				ptr->prev_free->next_free = ptr->next_free;
-			if (ptr->next_free)
-				ptr->next_free->prev_free = ptr->prev_free;
-		} else {
-			ptr = (ptr_t*)((unsigned char*)g_arena.buff + g_arena.offset);
-		}
-	}
-	ptr = mmap(NULL, size_to_alloc, PROT_WRITE | PROT_READ, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-	if (!ptr) return NULL;
-	ptr->data = (unsigned char*)ptr + DATA_OFFSET;
-	ptr->total_mem = size_to_alloc;
-	ptr->is_valid = true;
-	ptr->next_free = NULL;
-	ptr->prev_free = NULL;
-	return ptr->data;
 }
 
-// void mem_free(void *ptr) {
-// 	if (!ptr) return;
-// 	ptr_t *p = (ptr_t*)((unsigned char*)ptr - DATA_OFFSET);
-// 	if (p.)
-// }
+void mem_free(void *ptr) {
+}
+
+void *mem_realloc(void *ptr) {
+}
