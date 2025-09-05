@@ -15,15 +15,13 @@
 #define ARENA_SIZE 1024LU * 128
 #define NUM_PTR_SIZE_CLASSES\
 	(ARENA_SIZE - DATA_OFFSET) / MIN_ALLOC_SIZE
-#define PTR_SIZE_CLASS(alloc_size)\
-	(alloc_size) / MIN_ALLOC_SIZE 
+#define PTR_SIZE_CLASS(size_to_alloc)\
+	(size_to_alloc) / MIN_ALLOC_SIZE 
 
 typedef struct ptr ptr_t;
 struct ptr {
 	void *data;
 	size_t total_mem;
-	ptr_t *next_valid;
-	ptr_t *prev_valid;
 	ptr_t *next_free;
 	ptr_t *prev_free;
 	bool is_valid;
