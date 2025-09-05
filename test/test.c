@@ -5,6 +5,8 @@ TEST_INIT;
 
 int main(void) {
 	{
+		void *data = mem_alloc(1024);
+		ASSERT(data);
 	}
 
 	test_print_results();
