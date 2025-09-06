@@ -25,7 +25,7 @@
 #define MEM_OFFSET ROUNDUP(sizeof(ptr_t), MIN_ALLOC_SIZE)
 
 /** Calculates memory location of the ptr metadata. */
-#define PTR_META(pointer) (ptr_t*)((unsigned char*)(pointer) -  MEM_OFFSET)
+#define PTR_META(mem) (ptr_t*)((unsigned char*)(mem) -  MEM_OFFSET)
 
 /** The number of bytes that can be stored in the arena. 
  * This can be overridden by recompiling the library with 
