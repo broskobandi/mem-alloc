@@ -6,9 +6,10 @@
 #include <stdalign.h> /* for alignof(max_align_t) */
 #include <stdbool.h>
 #include <sys/mman.h> /* for mmap() and munmap() */
+#include <string.h> /* for memcpy */
 
 /*****************************************************************************
- * Macro helpers
+ * Macro definitions
  ****************************************************************************/
 
 /** Rounds up 'size' to the nearest multiple of alignof(max_align_t) */
@@ -99,13 +100,12 @@ struct arena {
 };
 
 /*****************************************************************************
- * Globals
+ * Test helpers
  ****************************************************************************/
 
-/** Thread local static global instance of the arena. 
- * Each thread gets its own copy of this eliminating the need
- * for mutex locks. */
-_Thread_local static arena_t g_arena;
-// extern arena_t g_arena;
+/** Returns a pointer to the global arena object.
+ * This is to avoid having to declare the static global instance in the 
+ * header file. */
+arena_t *get_arena();
 
 #endif

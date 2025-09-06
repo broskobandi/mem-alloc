@@ -39,6 +39,16 @@ SOFTWARE.
 // }
 
 /*****************************************************************************
+ * Globals
+ ****************************************************************************/
+
+/** Thread local static global instance of the arena. 
+ * Each thread gets its own copy of this eliminating the need
+ * for mutex locks. */
+_Thread_local static arena_t g_arena;
+// extern arena_t g_arena;
+
+/*****************************************************************************
  * Definitions of functions declared in the public header.
  ****************************************************************************/
 
@@ -57,6 +67,7 @@ SOFTWARE.
  * specifically fir this allocation. 
  * \param The (minimum) size to be allocated.
  * \return A pointer to the allocated data or NULL on failure. */
+#include <stdio.h>
 void *mem_alloc(size_t size) {
 	/* The total size to be allocated. */
 	size_t total_size = DATA_OFFSET + ROUNDUP(size);
@@ -84,6 +95,9 @@ void *mem_alloc(size_t size) {
 			}
 		} else {
 			ptr = (ptr_t*)&g_arena.buff[g_arena.offset];
+			printf("%p\n", &g_arena.buff[g_arena.offset]);
+			// printf("%p\n", ptr);
+			g_arena.offset += total_size;
 		}
 	} 
 
@@ -98,11 +112,14 @@ void *mem_alloc(size_t size) {
 		}
 	}
 
+	// I wanted to get rid of this for some reason. Why?
+	
 	/* The segment below is only executed if 'ptr' was successfully
 	 * allocated. */
 
 	/* Initialize 'ptr'. */
 	ptr->data = (void*)((unsigned char*)ptr + DATA_OFFSET);
+	// printf("%p\n", (unsigned char*)ptr->data - DATA_OFFSET);
 	ptr->total_size = total_size;
 	ptr->next_free = NULL;
 	ptr->prev_free = NULL;
@@ -137,3 +154,13 @@ void mem_free(void *ptr) {
 
 // void *mem_realloc(void *ptr) {
 // }
+
+/*****************************************************************************
+ * Test helpers
+ ****************************************************************************/
+
+arena_t *get_arena() {
+	return &g_arena;
+}
+
+void *arena_buff_ptr();

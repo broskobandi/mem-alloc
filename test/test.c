@@ -9,9 +9,8 @@ int main(void) {
 		void *data = mem_alloc(size);
 		ASSERT(data);
 		ptr_t *ptr = (ptr_t*)((unsigned char*)data - DATA_OFFSET);
-		printf("%p\n", ptr);
-		ASSERT((unsigned char*)ptr == &g_arena.buff[0]);
-		ASSERT(ptr);
+		// printf("%p\n", ptr);
+		ASSERT(ptr == (ptr_t*)get_arena()->buff);
 		ASSERT(!ptr->is_mmap);
 		ASSERT(ptr->is_valid == true);
 		ASSERT(ptr->data == data);
