@@ -70,7 +70,7 @@ _Thread_local static arena_t g_arena;
 #include <stdio.h>
 void *mem_alloc(size_t size) {
 	/* The total size to be allocated. */
-	size_t total_size = DATA_OFFSET + ROUNDUP(size);
+	size_t total_size = DATA_OFFSET + ROUNDUP(size, MIN_ALLOC_SIZE);
 
 	/* Allocation metadata to be initialized below. */
 	ptr_t *ptr = NULL;
@@ -115,8 +115,6 @@ void *mem_alloc(size_t size) {
 		}
 	}
 
-	// I wanted to get rid of this for some reason. Why?
-	
 	/* The segment below is only executed if 'ptr' was successfully
 	 * allocated. */
 
@@ -166,7 +164,7 @@ void mem_free(void *ptr) {
 	p->is_valid = false;
 }
 
-void *mem_realloc(void *ptr) {
+void *mem_realloc(void *ptr, size_t size) {
 	/* Return if ptr is NULL. */
 	if (!ptr) return NULL;
 
@@ -179,12 +177,9 @@ void *mem_realloc(void *ptr) {
 		return NULL;
 	}
 
-	/* Find size class */
-	// size_t size = p->total_size - DATA_OFFSET;
-	// ptr_t *free_ptr_tail = g_arena.free_ptr_tails[PTR_SIZE_CLASS(size)];
-
-
-	/* Check if realloc can be done in place. */
+	/* Check if realloc can be done in place */
+	if (ROUNDUP(size, MIN_ALLOC_SIZE) == p->total_size - DATA_OFFSET)
+		return ptr;
 
 	return NULL; // just so it compiles
 }

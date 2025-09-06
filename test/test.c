@@ -17,7 +17,8 @@ int main(void) {
 		ASSERT(ptr->data == data);
 		ASSERT(!ptr->next_free);
 		ASSERT(!ptr->prev_free);
-		ASSERT(ptr->total_size == DATA_OFFSET + ROUNDUP(size));
+		size_t exp_size = DATA_OFFSET + ROUNDUP(size, MIN_ALLOC_SIZE);
+		ASSERT(ptr->total_size == exp_size);
 		ASSERT(ptr == arena->ptr_list_tail);
 
 		// mem_free

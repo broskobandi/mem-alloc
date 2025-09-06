@@ -12,16 +12,16 @@
  * Macro definitions
  ****************************************************************************/
 
-/** Rounds up 'size' to the nearest multiple of alignof(max_align_t) */
-#define ROUNDUP(size)\
-	(((size) + alignof(max_align_t) - 1) & ~(alignof(max_align_t) - 1))
-
-/** Calculates data offset from the start of the pointer metadata. */
-#define DATA_OFFSET ROUNDUP(sizeof(ptr_t))
-
 /** The minimum allocation size which is the max alignment on
  * the platform. */
 #define MIN_ALLOC_SIZE alignof(max_align_t)
+
+/** Rounds up 'size' to the nearest multiple of 'to' */
+#define ROUNDUP(size, to)\
+	(((size) + (to) - 1) & ~((to) - 1))
+
+/** Calculates data offset from the start of the pointer metadata. */
+#define DATA_OFFSET ROUNDUP(sizeof(ptr_t), MIN_ALLOC_SIZE)
 
 /** The number of bytes that can be stored in the arena. 
  * This can be overridden by recompiling the library with 
