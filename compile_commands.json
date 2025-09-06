@@ -82,11 +82,11 @@
       "-x",
       "c",
       "-o",
-      "/tmp/test-f2b9d5.o",
+      "/tmp/test-fbd4e5.o",
       "test/test.c"
     ],
     "directory": "/home/bandigame/mem-alloc",
     "file": "/home/bandigame/mem-alloc/test/test.c",
-    "output": "/tmp/test-f2b9d5.o"
+    "output": "/tmp/test-fbd4e5.o"
   }
 ]
