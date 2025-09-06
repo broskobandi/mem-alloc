@@ -87,13 +87,13 @@ struct ptr {
 	 * freed. */
 	ptr_t *prev_free;
 
-	/** Next valid pointer. Only relevant if the pointer is not 
+	/** Next ptr in arena. Only relevant if the pointer is not 
 	 * int the free list.*/
-	ptr_t *next_valid;
+	ptr_t *next_in_arena;
 
-	/** Previous valid pointer. Only relevant if the pointer is not 
+	/** Previous ptr in arena. Only relevant if the pointer is not 
 	 * int the free list.*/
-	ptr_t *prev_valid;
+	ptr_t *prev_in_arena;
 
 	/** Boolean indicating whether the pointer is valid or not.
 	 * It is set to false when the pointer is freed. */
