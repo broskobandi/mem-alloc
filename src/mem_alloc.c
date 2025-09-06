@@ -127,6 +127,11 @@ static inline void merge_neighbouring_ptrs(ptr_t *ptr) {
 	}
 }
 
+static inline void *realloc_in_place(ptr_t *ptr, size_t size) {
+	return ptr->total_size >= MEM_OFFSET + ROUNDUP(size, MIN_ALLOC_SIZE) ?
+		ptr->mem : NULL;
+}
+
 /*****************************************************************************
  * Definitions of functions declared in the public header.
  ****************************************************************************/
@@ -189,7 +194,7 @@ void *mem_realloc(void *mem, size_t size) {
 	void *new_mem = NULL;
 
 	/* Attempt to realloc in place. */
-	new_mem = realloc_in_place(mem, size);
+	new_mem = realloc_in_place(ptr, size);
 
 	/* Otherwise, attempt to create a new allocation and copy the data. */
 	if (!new_mem) {
