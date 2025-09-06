@@ -16,3 +16,4 @@ The aim of the project is to provide a simple yet highly performant allocator fo
 - Add free list for mmap allocations.
 - Implement broader size classes.
 - Make mmap fallback mechanism opt-out?
+- Add documentation
