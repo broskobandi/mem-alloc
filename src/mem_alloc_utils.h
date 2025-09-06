@@ -75,9 +75,16 @@ struct ptr {
 	 * freed. */
 	ptr_t *prev_free;
 
+	/** Next valid pointer. Only relevant if the pointer is not 
+	 * int the free list.*/
+	ptr_t *next_valid;
+
+	/** Previous valid pointer. Only relevant if the pointer is not 
+	 * int the free list.*/
+	ptr_t *prev_valid;
+
 	/** Boolean indicating whether the pointer is valid or not.
-	 * It is set to false when the pointer is freed. Needed
-	 * for checking if expansion can be done in place. */
+	 * It is set to false when the pointer is freed. */
 	bool is_valid;
 
 	/** Boolean indicating whether the memory was allocated in the 
@@ -92,6 +99,9 @@ struct arena {
 
 	/** An array of linked list of all size classes of free pointers. */
 	ptr_t *free_ptr_tails[NUM_PTR_SIZE_CLASSES];
+
+	/** A list of all the pointers stored (valid or invalid). */
+	ptr_t *ptr_list_tail;
 
 	/** The size of the region in the arena that is currently
 	 * occupied by either valid or invalid (freed and ready to be reused)

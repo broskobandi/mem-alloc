@@ -95,8 +95,11 @@ void *mem_alloc(size_t size) {
 			}
 		} else {
 			ptr = (ptr_t*)&g_arena.buff[g_arena.offset];
-			printf("%p\n", &g_arena.buff[g_arena.offset]);
-			// printf("%p\n", ptr);
+			if (g_arena.ptr_list_tail) {
+				g_arena.ptr_list_tail->next_valid = ptr;
+				ptr->prev_valid = g_arena.ptr_list_tail;
+			}
+			g_arena.ptr_list_tail = ptr;
 			g_arena.offset += total_size;
 		}
 	} 
@@ -135,7 +138,7 @@ void *mem_alloc(size_t size) {
  * if the memory was allocated using mmap().
  * \param ptr The pointer to the memory to be freed.*/
 void mem_free(void *ptr) {
-	/* Return if pointer is NULL. */
+	/* Return if ptr is NULL. */
 	if (!ptr) return;
 
 	/* Get metadata. */
@@ -163,8 +166,28 @@ void mem_free(void *ptr) {
 	p->is_valid = false;
 }
 
-// void *mem_realloc(void *ptr) {
-// }
+void *mem_realloc(void *ptr) {
+	/* Return if ptr is NULL. */
+	if (!ptr) return NULL;
+
+	/* Get metadata. */
+	ptr_t *p = (ptr_t*)((unsigned char*)ptr - DATA_OFFSET);
+
+	/* Check if the memory was allocated using mmap(). */
+	if (p->is_mmap) {
+		munmap(p, p->total_size);
+		return NULL;
+	}
+
+	/* Find size class */
+	// size_t size = p->total_size - DATA_OFFSET;
+	// ptr_t *free_ptr_tail = g_arena.free_ptr_tails[PTR_SIZE_CLASS(size)];
+
+
+	/* Check if realloc can be done in place. */
+
+	return NULL; // just so it compiles
+}
 
 /*****************************************************************************
  * Test helpers

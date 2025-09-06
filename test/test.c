@@ -18,6 +18,7 @@ int main(void) {
 		ASSERT(!ptr->next_free);
 		ASSERT(!ptr->prev_free);
 		ASSERT(ptr->total_size == DATA_OFFSET + ROUNDUP(size));
+		ASSERT(ptr == arena->ptr_list_tail);
 
 		// mem_free
 		mem_free(data);
@@ -36,15 +37,24 @@ int main(void) {
 				       // wise?
 		ASSERT(!arena->free_ptr_tails[PTR_SIZE_CLASS(size)]);
 		free_tail = NULL;
+		ASSERT(ptr2 == arena->ptr_list_tail);
 
 		// mmap, munmap
 		void *data3 = mem_alloc(ARENA_SIZE * 2);
 		ASSERT(data3);
 		ptr_t *ptr3 = (ptr_t*)((unsigned char*)data3 - DATA_OFFSET);
 		ASSERT(ptr3->is_mmap == true);
+		ASSERT(ptr2 == arena->ptr_list_tail);
 		mem_free(data3);
 		data3 = NULL;
 		ASSERT(!arena->free_ptr_tails[PTR_SIZE_CLASS(size)]);
+
+		// Update ptr list tail
+		void *data4 = mem_alloc(size / 2);
+		ASSERT(data4);
+		ptr_t *ptr4 = (ptr_t*)((unsigned char*)data4 - DATA_OFFSET);
+		ASSERT(ptr4 == arena->ptr_list_tail);
+		ASSERT(ptr2 == arena->ptr_list_tail->prev_valid);
 	}
 
 	test_print_results();
