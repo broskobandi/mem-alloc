@@ -98,6 +98,35 @@ static inline void *use_mmap(size_t total_size) {
 	return ptr->mem;
 }
 
+static inline void add_to_free_list(ptr_t *ptr) {
+	ptr_t **tail = &g_arena.free_ptr_tails[SIZE_CLASS(ptr->total_size)];
+	if (*tail) {
+		(*tail)->next_free = ptr;
+		ptr->prev_free = (*tail);
+	}
+	*tail = ptr;
+}
+
+static inline void remove_from_free_list(ptr_t *ptr) {
+	if (ptr->next_free)
+		ptr->next_free->prev_free = ptr->prev_free;
+	if (ptr->prev_free)
+		ptr->prev_free->next_free = ptr->next_free;
+}
+
+static inline void merge_neighbouring_ptrs(ptr_t *ptr) {
+	if (!ptr->next_in_arena->is_valid) {
+		remove_from_free_list(ptr->next_in_arena);
+		ptr->total_size += ptr->next_in_arena->total_size;
+		ptr->next_in_arena = ptr->next_in_arena->next_in_arena;
+	}
+	if (!ptr->prev_in_arena->is_valid) {
+		remove_from_free_list(ptr->prev_in_arena);
+		ptr->total_size += ptr->prev_in_arena->total_size;
+		ptr->prev_in_arena = ptr->prev_in_arena->prev_in_arena;
+	}
+}
+
 /*****************************************************************************
  * Definitions of functions declared in the public header.
  ****************************************************************************/
@@ -133,13 +162,14 @@ void mem_free(void *mem) {
 	ptr_t *ptr = PTR_META(mem);
 	if (!ptr->is_valid) return;
 
+	/* Set ptr invalid */
+	ptr->is_valid = false;
 
 	/* If the allocation was made with mmap(), use munmap(),
 	 * otherwise, handle arena memory. */
 	if (ptr->is_mmap) {
 		/* Set this to false in case the ptr gets mistakenly
 		 * dereferenced in the future. */
-		ptr->is_valid = false;
 		munmap(ptr, ptr->total_size);
 	} else {
 		add_to_free_list(ptr);
