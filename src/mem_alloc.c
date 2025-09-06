@@ -135,20 +135,31 @@ void *mem_alloc(size_t size) {
  * if the memory was allocated using mmap().
  * \param ptr The pointer to the memory to be freed.*/
 void mem_free(void *ptr) {
+	/* Return if pointer is NULL. */
 	if (!ptr) return;
+
+	/* Get metadata. */
 	ptr_t *p = (ptr_t*)((unsigned char*)ptr - DATA_OFFSET);
+
+	/* Check if the memory was allocated using mmap(). */
 	if (p->is_mmap) {
 		munmap(p, p->total_size);
 		return;
 	}
+
+	/* Find size class */
 	size_t size = p->total_size - DATA_OFFSET;
 	ptr_t *free_ptr_tail = g_arena.free_ptr_tails[PTR_SIZE_CLASS(size)];
+
+	/* Update the appropriate free list. */
 	if (!free_ptr_tail) {
 		g_arena.free_ptr_tails[PTR_SIZE_CLASS(size)] = p;
 	} else {
 		free_ptr_tail->next_free = p;
 		p->prev_free = free_ptr_tail;
 	}
+
+	/* Update ptr state. */
 	p->is_valid = false;
 }
 
