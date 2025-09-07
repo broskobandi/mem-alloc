@@ -16,6 +16,14 @@ void test_use_arena() {
 	ASSERT(!ptr->next_in_arena);
 	ASSERT(!ptr->prev_free);
 	ASSERT(!ptr->next_free);
+	ASSERT(arena.offset == total_size);
+	ASSERT(!arena.free_ptr_tails[SIZE_CLASS(total_size)]);
+	ASSERT(arena.ptrs_tail == ptr);
+	ASSERT((ptr_t*)arena.buff == ptr);
+}
+
+void test_add_to_free_list() {
+	// arena_t arena = {0};
 }
 
 void test_use_free_list() {

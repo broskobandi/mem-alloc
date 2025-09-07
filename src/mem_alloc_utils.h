@@ -159,8 +159,8 @@ static inline void *use_arena(size_t total_size, arena_t *arena) {
 	if (arena->ptrs_tail) {
 		arena->ptrs_tail->next_in_arena = ptr;
 		ptr->prev_in_arena = arena->ptrs_tail;
-		arena->ptrs_tail = ptr;
 	}
+	arena->ptrs_tail = ptr;
 	return ptr->mem;
 }
 
