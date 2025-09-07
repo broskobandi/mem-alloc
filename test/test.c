@@ -150,6 +150,39 @@ void test_megre_neighbouring_ptrs() {
 	ASSERT(arena.free_ptr_tails[SIZE_CLASS(ptr->total_size)] == ptr);
 }
 
+void test_move_ptr() {
+	arena_t arena = {0};
+
+	size_t big_size = (MEM_OFFSET + MIN_ALLOC_SIZE) * 4;
+	size_t small_size = MEM_OFFSET + MIN_ALLOC_SIZE;
+	size_t move_size = MIN_ALLOC_SIZE;
+
+	void *mem = use_arena(big_size, &arena);
+	ptr_t *ptr = PTR_META(mem);
+	void *mem2 = use_arena(small_size, &arena);
+	ptr_t *ptr2 = PTR_META(mem2);
+	void *mem3 = use_arena(big_size, &arena);
+	ptr_t *ptr3 = PTR_META(mem3);
+
+	move_ptr(&ptr2, move_size);
+	ASSERT(ptr->next_in_arena == ptr2);
+	ASSERT(ptr2->prev_in_arena == ptr);
+	ASSERT(ptr3->prev_in_arena == ptr2);
+	ASSERT(ptr2->next_in_arena == ptr3);
+}
+
+void test_realloc_in_place() {
+	// arena_t arena = {0};
+	// size_t original_size = MEM_OFFSET + MIN_ALLOC_SIZE;
+	// void *mem = use_arena(original_size, &arena);
+	// ptr_t *ptr = PTR_META(mem);
+	//
+	// size_t new_size = original_size * 2;
+	// void *mem_new = realloc_in_place(ptr, new_size);
+	//
+	// ASSERT()
+}
+
 int main(void) {
 	test_use_arena();
 	test_add_to_free_list();

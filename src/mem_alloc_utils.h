@@ -221,8 +221,22 @@ static inline void merge_neighbouring_ptrs(ptr_t *ptr, arena_t *arena) {
 	}
 }
 
+static inline void move_ptr(ptr_t **ptr, size_t size) {
+	*ptr = (ptr_t*)((unsigned char*)(*ptr) + size);
+	(*ptr)->mem =
+		(ptr_t*)((unsigned char*)(*ptr)->mem + size);
+	if ((*ptr)->next_in_arena)
+		(*ptr)->next_in_arena->prev_in_arena = *ptr;
+	if ((*ptr)->prev_in_arena)
+		(*ptr)->prev_in_arena->next_in_arena = *ptr;
+	if ((*ptr)->next_free)
+		(*ptr)->next_free->prev_free = *ptr;
+	if ((*ptr)->prev_free)
+		(*ptr)->prev_free->next_free = *ptr;
+}
+
 static inline void *realloc_in_place(
-	ptr_t *ptr, size_t total_size
+	ptr_t *ptr, size_t total_size, arena_t *arena
 ) {
 	if (ptr->total_size >= total_size)
 		return ptr->mem;
@@ -236,23 +250,18 @@ static inline void *realloc_in_place(
 		(*next)->total_size >= extra_size_needed &&
 		(*next)->total_size - extra_size_needed >= MIN_ALLOC_SIZE
 	) {
-		*next = (ptr_t*)((unsigned char*)(*next) + extra_size_needed);
-		(*next)->mem =
-			(ptr_t*)((unsigned char*)(*next)->mem + extra_size_needed);
-		ptr->next_in_arena = *next;
-		(*next)->prev_in_arena = ptr;
-		if ((*next)->next_in_arena)
-			(*next)->next_in_arena->prev_in_arena = *next;
-		if ((*next)->next_free)
-			(*next)->next_free->prev_free = *next;
-		if ((*next)->prev_free)
-			(*next)->prev_free->next_free = *next;
-		(*next)->total_size -= extra_size_needed;
+		move_ptr(next, extra_size_needed);
 		ptr->total_size += extra_size_needed;
 		return ptr->mem;
-	} else {
-		return NULL;
 	}
+
+	if (!*next && arena->offset + extra_size_needed <= ARENA_SIZE) {
+		ptr->total_size += extra_size_needed;
+		(*next)->total_size -= extra_size_needed;
+		return ptr->mem;
+	}
+
+	return NULL;
 }
 
 #endif
