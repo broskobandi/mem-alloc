@@ -221,9 +221,4 @@ static inline void merge_neighbouring_ptrs(ptr_t *ptr, arena_t *arena) {
 	}
 }
 
-static inline void *realloc_in_place(ptr_t *ptr, size_t size) {
-	return ptr->total_size >= MEM_OFFSET + ROUNDUP(size, MIN_ALLOC_SIZE) ?
-		ptr->mem : NULL;
-}
-
 #endif

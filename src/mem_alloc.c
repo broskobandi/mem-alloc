@@ -94,22 +94,21 @@ void *mem_realloc(void *mem, size_t size) {
 	ptr_t *ptr = PTR_META(mem);
 	if (!ptr->is_valid) return NULL;
 
-	/* The memory to be returned. */
-	void *new_mem = NULL;
+	/* Calculate total size */
+	size_t total_size = MEM_OFFSET + ROUNDUP(size, MIN_ALLOC_SIZE);
 
-	/* Attempt to realloc in place. */
-	new_mem = realloc_in_place(ptr, size);
+	/* Realloc in place, if possible. */
+	if (ptr->total_size <= total_size)
+		return ptr->mem;
 
 	/* Otherwise, attempt to create a new allocation and copy the data. */
-	if (!new_mem) {
-		new_mem = mem_alloc(size);
-		if (!new_mem) return NULL;
-		ptr_t *new_ptr = PTR_META(new_mem);
-		size_t size_to_copy =
-			ptr->total_size <= new_ptr->total_size ? 
-			ptr->total_size : new_ptr->total_size;
-		memcpy(new_mem, mem, size_to_copy);
-	}
+	void *new_mem = mem_alloc(size);
+	if (!new_mem) return NULL;
+	ptr_t *new_ptr = PTR_META(new_mem);
+	size_t size_to_copy =
+		ptr->total_size <= new_ptr->total_size ? 
+		ptr->total_size : new_ptr->total_size;
+	memcpy(new_mem, mem, size_to_copy);
 
 	return new_mem;
 }
