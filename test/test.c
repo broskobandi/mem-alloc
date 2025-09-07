@@ -36,6 +36,14 @@ void test_add_to_free_list() {
 	add_to_free_list(ptr, &arena);
 	ptr_t *tail = arena.free_ptr_tails[SIZE_CLASS(total_size)];
 	ASSERT(tail == ptr);
+
+	void *mem2 = use_arena(total_size, &arena);
+	ptr_t *ptr2 = PTR_META(mem2);
+	add_to_free_list(ptr2, &arena);
+	tail = arena.free_ptr_tails[SIZE_CLASS(total_size)];
+	ASSERT(tail == ptr2);
+	ASSERT(ptr2->prev_free == ptr);
+	ASSERT(ptr->next_free == ptr2);
 }
 
 void test_use_free_list() {
