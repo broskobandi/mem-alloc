@@ -3,17 +3,29 @@
 
 TEST_INIT;
 
-int main(void) {
-	static const size_t ARENA_ALLOC_SIZE = ARENA_SIZE / 32;
-	static const size_t MMAP_ALLOC_SIZE = ARENA_SIZE * 2;
-	// static const size_t ITER = 1000;
-	{ // 
-		void *mem1 = mem_alloc(ARENA_ALLOC_SIZE);
-		ASSERT(mem1);
+void test_use_arena() {
+	arena_t arena = {0};
+	size_t total_size = MEM_OFFSET + ROUNDUP(sizeof(int), MIN_ALLOC_SIZE);
+	void *mem = use_arena(total_size, &arena);
+	ptr_t *ptr = PTR_META(mem);
+	ASSERT(mem == ptr->mem);
+	ASSERT(!ptr->is_mmap);
+	ASSERT(ptr->total_size == total_size);
+	ASSERT(ptr->is_valid);
+	ASSERT(!ptr->prev_in_arena);
+	ASSERT(!ptr->next_in_arena);
+	ASSERT(!ptr->prev_free);
+	ASSERT(!ptr->next_free);
+}
 
-		void *mem2 = mem_alloc(MMAP_ALLOC_SIZE);
-		ASSERT(mem2);
+void test_use_free_list() {
+	{ // 
 	}
+}
+
+int main(void) {
+	test_use_arena();
+	test_use_free_list();
 
 	test_print_results();
 	return 0;
