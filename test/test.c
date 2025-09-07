@@ -122,7 +122,32 @@ void test_remove_from_free_list() {
 
 	remove_from_free_list(ptr, &arena);
 	ASSERT(!*tail);
+}
 
+void test_megre_neighbouring_ptrs() {
+	arena_t arena = {0};
+	size_t total_size = MEM_OFFSET + ROUNDUP(sizeof(int), MIN_ALLOC_SIZE);
+
+	void *mem = use_arena(total_size, &arena);
+	ptr_t *ptr = PTR_META(mem);
+	add_to_free_list(ptr, &arena);
+
+	void *mem2 = use_arena(total_size, &arena);
+	ptr_t *ptr2 = PTR_META(mem2);
+	add_to_free_list(ptr2, &arena);
+
+	void *mem3 = use_arena(total_size, &arena);
+	ptr_t *ptr3 = PTR_META(mem3);
+	add_to_free_list(ptr3, &arena);
+
+	void *mem4 = use_arena(total_size, &arena);
+	ptr_t *ptr4 = PTR_META(mem4);
+
+	merge_neighbouring_ptrs(ptr2, &arena);
+	ASSERT(ptr->total_size == total_size * 3);
+	ASSERT(ptr->next_in_arena == ptr4);
+	ASSERT(ptr4->prev_in_arena == ptr);
+	ASSERT(arena.free_ptr_tails[SIZE_CLASS(ptr->total_size)] == ptr);
 }
 
 int main(void) {
@@ -130,6 +155,7 @@ int main(void) {
 	test_add_to_free_list();
 	test_use_free_list();
 	test_remove_from_free_list();
+	test_megre_neighbouring_ptrs();
 
 	test_print_results();
 	return 0;
