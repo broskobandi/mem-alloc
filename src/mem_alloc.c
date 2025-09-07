@@ -73,18 +73,16 @@ void mem_free(void *mem) {
 	ptr_t *ptr = PTR_META(mem);
 	if (!ptr->is_valid) return;
 
-	/* Set ptr invalid */
-	ptr->is_valid = false;
-
 	/* If the allocation was made with mmap(), use munmap(),
 	 * otherwise, handle arena memory. */
 	if (ptr->is_mmap) {
 		/* Set this to false in case the ptr gets mistakenly
 		 * dereferenced in the future. */
+		ptr->is_valid = false;
 		munmap(ptr, ptr->total_size);
 	} else {
 		add_to_free_list(ptr, &g_arena);
-		merge_neighbouring_ptrs(ptr);
+		merge_neighbouring_ptrs(ptr, &g_arena);
 	}
 }
 

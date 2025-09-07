@@ -129,8 +129,6 @@ static inline void *use_free_list(ptr_t **free_tail) {
 	/* Init ptr */
 	ptr_t *ptr = *free_tail;
 	ptr->is_valid = true;
-	ptr->next_free = NULL;
-	ptr->prev_free = NULL;
 
 	/* Update free list. */
 	if ((*free_tail)->prev_free) {
@@ -139,6 +137,9 @@ static inline void *use_free_list(ptr_t **free_tail) {
 	} else {
 		*free_tail = NULL;
 	}
+
+	ptr->next_free = NULL;
+	ptr->prev_free = NULL;
 
 	return ptr->mem;
 }
@@ -181,6 +182,7 @@ static inline void *use_mmap(size_t total_size) {
 }
 
 static inline void add_to_free_list(ptr_t *ptr, arena_t *arena) {
+	ptr->is_valid = false;
 	ptr_t **tail = &arena->free_ptr_tails[SIZE_CLASS(ptr->total_size)];
 	if (*tail) {
 		(*tail)->next_free = ptr;
@@ -189,21 +191,25 @@ static inline void add_to_free_list(ptr_t *ptr, arena_t *arena) {
 	*tail = ptr;
 }
 
-static inline void remove_from_free_list(ptr_t *ptr) {
-	if (ptr->next_free)
+static inline void remove_from_free_list(ptr_t *ptr, arena_t *arena) {
+	ptr_t **tail = &arena->free_ptr_tails[SIZE_CLASS(ptr->total_size)];
+	if (ptr->next_free) {
 		ptr->next_free->prev_free = ptr->prev_free;
+	} else {
+		*tail = ptr->prev_free;
+	}
 	if (ptr->prev_free)
 		ptr->prev_free->next_free = ptr->next_free;
 }
 
-static inline void merge_neighbouring_ptrs(ptr_t *ptr) {
+static inline void merge_neighbouring_ptrs(ptr_t *ptr, arena_t *arena) {
 	if (ptr->next_in_arena && !ptr->next_in_arena->is_valid) {
-		remove_from_free_list(ptr->next_in_arena);
+		remove_from_free_list(ptr->next_in_arena, arena);
 		ptr->total_size += ptr->next_in_arena->total_size;
 		ptr->next_in_arena = ptr->next_in_arena->next_in_arena;
 	}
 	if (ptr->prev_in_arena && !ptr->prev_in_arena->is_valid) {
-		remove_from_free_list(ptr->prev_in_arena);
+		remove_from_free_list(ptr->prev_in_arena, arena);
 		ptr->total_size += ptr->prev_in_arena->total_size;
 		ptr->prev_in_arena = ptr->prev_in_arena->prev_in_arena;
 	}
