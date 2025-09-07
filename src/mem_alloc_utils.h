@@ -221,4 +221,38 @@ static inline void merge_neighbouring_ptrs(ptr_t *ptr, arena_t *arena) {
 	}
 }
 
+static inline void *realloc_in_place(
+	ptr_t *ptr, size_t total_size
+) {
+	if (ptr->total_size >= total_size)
+		return ptr->mem;
+
+	ptr_t **next = &ptr->next_in_arena;
+	size_t extra_size_needed =
+		ROUNDUP(total_size - ptr->total_size, MIN_ALLOC_SIZE);
+
+	if (
+		*next && !(*next)->is_valid &&
+		(*next)->total_size >= extra_size_needed &&
+		(*next)->total_size - extra_size_needed >= MIN_ALLOC_SIZE
+	) {
+		*next = (ptr_t*)((unsigned char*)(*next) + extra_size_needed);
+		(*next)->mem =
+			(ptr_t*)((unsigned char*)(*next)->mem + extra_size_needed);
+		ptr->next_in_arena = *next;
+		(*next)->prev_in_arena = ptr;
+		if ((*next)->next_in_arena)
+			(*next)->next_in_arena->prev_in_arena = *next;
+		if ((*next)->next_free)
+			(*next)->next_free->prev_free = *next;
+		if ((*next)->prev_free)
+			(*next)->prev_free->next_free = *next;
+		(*next)->total_size -= extra_size_needed;
+		ptr->total_size += extra_size_needed;
+		return ptr->mem;
+	} else {
+		return NULL;
+	}
+}
+
 #endif
