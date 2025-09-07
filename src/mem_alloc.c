@@ -140,12 +140,13 @@ void *mem_alloc(size_t size) {
 	/* Get total allocation size. */
 	size_t total_size = MEM_OFFSET + ROUNDUP(size, MIN_ALLOC_SIZE);
 
+
 	/* A pointer to the user-owned memory to return. */
 	void *mem = NULL;
 
 	/* Allocate in free list, if exists. */
 	ptr_t **free_tail = &g_arena.free_ptr_tails[SIZE_CLASS(total_size)];
-	if (free_tail)
+	if (!free_tail)
 		mem = use_free_list(free_tail);
 
 	/* Otherwise, allocate in the arena, if size fits */
