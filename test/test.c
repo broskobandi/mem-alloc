@@ -229,6 +229,32 @@ void test_realloc_in_place() {
 	}
 }
 
+void test_use_mmap() {
+	size_t size = ARENA_SIZE * 2;
+	void *mem = use_mmap(size);
+	ptr_t *ptr = PTR_META(mem);
+	ASSERT(ptr->total_size == size);
+	ASSERT(!ptr->prev_in_arena);
+	ASSERT(!ptr->next_in_arena);
+	ASSERT(ptr->mem == mem);
+	ASSERT(ptr->is_mmap);
+	ASSERT(ptr->is_valid);
+	ASSERT(!ptr->next_free);
+	ASSERT(!ptr->prev_free);
+}
+
+void test_mem_alloc() {
+	{ // Allocate in free list
+
+	}
+	{ // Allocate in arena
+
+	}
+	{ // Allocate with mmap
+
+	}
+}
+
 int main(void) {
 	test_use_arena();
 	test_add_to_free_list();
@@ -237,6 +263,7 @@ int main(void) {
 	test_megre_neighbouring_ptrs();
 	test_move_ptr();
 	test_realloc_in_place();
+	test_use_mmap();
 
 	test_print_results();
 	return 0;
