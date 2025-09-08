@@ -15,9 +15,9 @@
       "build/test",
       "test/test.c"
     ],
-    "directory": "/home/bandigame/mem-alloc",
-    "file": "/home/bandigame/mem-alloc/test/test.c",
-    "output": "/home/bandigame/mem-alloc/build/test"
+    "directory": "/home/bandiasus/mem-alloc",
+    "file": "/home/bandiasus/mem-alloc/test/test.c",
+    "output": "/home/bandiasus/mem-alloc/build/test"
   },
   {
     "arguments": [
@@ -50,7 +50,7 @@
       "-tune-cpu",
       "generic",
       "-debugger-tuning=gdb",
-      "-fcoverage-compilation-dir=/home/bandigame/mem-alloc",
+      "-fcoverage-compilation-dir=/home/bandiasus/mem-alloc",
       "-resource-dir",
       "/usr/lib/clang/17",
       "-I",
@@ -72,7 +72,7 @@
       "-Werror",
       "-Wunused-result",
       "-Wconversion",
-      "-fdebug-compilation-dir=/home/bandigame/mem-alloc",
+      "-fdebug-compilation-dir=/home/bandiasus/mem-alloc",
       "-ferror-limit",
       "19",
       "-fgnuc-version=4.2.1",
@@ -82,11 +82,11 @@
       "-x",
       "c",
       "-o",
-      "/tmp/test-c2e961.o",
+      "/tmp/test-93e7b6.o",
       "test/test.c"
     ],
-    "directory": "/home/bandigame/mem-alloc",
-    "file": "/home/bandigame/mem-alloc/test/test.c",
-    "output": "/tmp/test-c2e961.o"
+    "directory": "/home/bandiasus/mem-alloc",
+    "file": "/home/bandiasus/mem-alloc/test/test.c",
+    "output": "/tmp/test-93e7b6.o"
   }
 ]

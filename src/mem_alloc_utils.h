@@ -122,7 +122,14 @@ struct arena {
 };
 
 /*****************************************************************************
- * Static inline helper functions
+ * Helpers for the test utility
+ ****************************************************************************/
+
+arena_t *global_arena();
+void reset_arena();
+
+/*****************************************************************************
+ * Helpers for the public functions
  ****************************************************************************/
 
 static inline void *use_free_list(ptr_t **free_tail) {

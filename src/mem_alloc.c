@@ -31,12 +31,25 @@ SOFTWARE.
 
 #include "mem_alloc_utils.h"
 
+
 /*****************************************************************************
  * Globals
  ****************************************************************************/
 
 /** Thread local static global instance of the arena. */
 _Thread_local static arena_t g_arena;
+
+/*****************************************************************************
+ * Getters for the test utility
+ ****************************************************************************/
+
+arena_t *global_arena() {
+	return &g_arena;
+}
+
+void reset_arena() {
+	memset(&g_arena, 0, sizeof(arena_t));
+}
 
 /*****************************************************************************
  * Definitions of functions declared in the public header.
@@ -46,23 +59,17 @@ void *mem_alloc(size_t size) {
 	/* Get total allocation size. */
 	size_t total_size = MEM_OFFSET + ROUNDUP(size, MIN_ALLOC_SIZE);
 
-	/* A pointer to the user-owned memory to return. */
-	void *mem = NULL;
-
 	/* Allocate in free list, if exists. */
 	ptr_t **free_tail = &g_arena.free_ptr_tails[SIZE_CLASS(total_size)];
 	if (*free_tail)
-		mem = use_free_list(free_tail);
+		return use_free_list(free_tail);
 
 	/* Otherwise, allocate in the arena, if size fits */
-	if (!mem && g_arena.offset + total_size < ARENA_SIZE)
-		mem = use_arena(total_size, &g_arena);
+	if (g_arena.offset + total_size < ARENA_SIZE)
+		return use_arena(total_size, &g_arena);
 
 	/* Otherwise, attempt to allocate with mmap(). */
-	if (!mem)
-		mem = use_mmap(total_size);
-
-	return mem;
+	return use_mmap(total_size);
 }
 
 void mem_free(void *mem) {

@@ -244,14 +244,47 @@ void test_use_mmap() {
 }
 
 void test_mem_alloc() {
-	{ // Allocate in free list
-
-	}
 	{ // Allocate in arena
-
+		size_t user_owned_size = ARENA_SIZE / 32;
+		size_t total_size =
+			MEM_OFFSET + ROUNDUP(user_owned_size, MIN_ALLOC_SIZE);
+		void *mem = mem_alloc(user_owned_size);
+		arena_t *arena = global_arena();
+		ptr_t *ptr = PTR_META(mem);
+		ASSERT(ptr->mem == mem);
+		ASSERT(!ptr->is_mmap);
+		ASSERT(ptr->is_valid);
+		ASSERT(!ptr->next_free);
+		ASSERT(!ptr->prev_free);
+		ASSERT(!ptr->next_in_arena);
+		ASSERT(!ptr->prev_in_arena);
+		ASSERT(ptr->total_size = total_size);
+		ASSERT(arena->ptrs_tail == ptr);
+		ASSERT(arena->offset == total_size);
+		ASSERT((ptr_t*)arena->buff == ptr);
+	}
+	{ // Allocate in free list
+		reset_arena();
+		size_t user_owned_size = ARENA_SIZE / 32;
+		size_t total_size =
+			MEM_OFFSET + ROUNDUP(user_owned_size, MIN_ALLOC_SIZE);
+		void *mem = mem_alloc(user_owned_size);
+		arena_t *arena = global_arena();
+		ptr_t *ptr = PTR_META(mem);
+		add_to_free_list(ptr, arena);
+		ASSERT(arena->free_ptr_tails[SIZE_CLASS(total_size)]);
+		void *mem2 = mem_alloc(user_owned_size);
+		ptr_t *ptr2 = PTR_META(mem2);
+		ASSERT(mem2 == mem);
+		ASSERT(ptr2->total_size == total_size);
+		ASSERT(!arena->free_ptr_tails[SIZE_CLASS(total_size)]);
 	}
 	{ // Allocate with mmap
-
+		reset_arena();
+		void *mem = mem_alloc(ARENA_SIZE * 2);
+		ptr_t *ptr = PTR_META(mem);
+		ASSERT(ptr->mem == mem);
+		ASSERT(ptr->is_mmap);
 	}
 }
 
@@ -264,6 +297,7 @@ int main(void) {
 	test_move_ptr();
 	test_realloc_in_place();
 	test_use_mmap();
+	test_mem_alloc();
 
 	test_print_results();
 	return 0;
