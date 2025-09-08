@@ -82,11 +82,11 @@
       "-x",
       "c",
       "-o",
-      "/tmp/test-d29010.o",
+      "/tmp/test-d215ff.o",
       "test/test.c"
     ],
     "directory": "/home/bandiasus/mem-alloc",
     "file": "/home/bandiasus/mem-alloc/test/test.c",
-    "output": "/tmp/test-d29010.o"
+    "output": "/tmp/test-d215ff.o"
   }
 ]

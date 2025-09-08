@@ -105,11 +105,11 @@ void *mem_realloc(void *mem, size_t size) {
 	size_t total_size = MEM_OFFSET + ROUNDUP(size, MIN_ALLOC_SIZE);
 
 	/* Realloc in place, if possible. */
-	if (ptr->total_size <= total_size)
-		return ptr->mem;
+	void *new_mem = realloc_in_place(ptr, total_size, &g_arena);
+	if (new_mem) return new_mem;
 
 	/* Otherwise, attempt to create a new allocation and copy the data. */
-	void *new_mem = mem_alloc(size);
+	new_mem = mem_alloc(size);
 	if (!new_mem) return NULL;
 	ptr_t *new_ptr = PTR_META(new_mem);
 	size_t size_to_copy =

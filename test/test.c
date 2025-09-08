@@ -320,6 +320,32 @@ void test_mem_free() {
 	}
 }
 
+void test_mem_realloc() {
+	{ // realloc in place
+		reset_arena();
+		void *mem = mem_alloc(ARENA_SIZE / 32);
+		void *new_mem = mem_realloc(mem, ARENA_SIZE / 16);
+		ptr_t *new_ptr = PTR_META(new_mem);
+		ptr_t *ptr = PTR_META(mem);
+		ASSERT(mem == new_mem);
+		ASSERT(new_ptr == ptr);
+	}
+	{ // new alloc
+		reset_arena();
+		void *mem = mem_alloc(ARENA_SIZE / 32);
+		int value = 5;
+		memcpy(mem, &value, sizeof(int));
+		void *mem2 = mem_alloc(ARENA_SIZE / 32);
+		ptr_t *ptr = PTR_META(mem);
+		ptr_t *ptr2 = PTR_META(mem2);
+		void *new_mem = mem_realloc(mem, ARENA_SIZE / 16);
+		ASSERT(*(int*)new_mem == value);
+		ptr_t *new_ptr = PTR_META(new_mem);
+		ASSERT(new_ptr != ptr);
+		ASSERT(new_ptr == ptr2->next_in_arena);
+	}
+}
+
 int main(void) {
 	test_use_arena();
 	test_add_to_free_list();
@@ -331,6 +357,7 @@ int main(void) {
 	test_use_mmap();
 	test_mem_alloc();
 	test_mem_free();
+	test_mem_realloc();
 
 	test_print_results();
 	return 0;
