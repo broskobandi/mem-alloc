@@ -55,6 +55,9 @@ void reset_arena() {
  * Definitions of functions declared in the public header.
  ****************************************************************************/
 
+/** Allocate memory.
+ * \param size The size of memory (in bytes) to allocate. 
+ * \return The pointer to the allocated memory. */
 void *mem_alloc(size_t size) {
 	/* Get total allocation size. */
 	size_t total_size = MEM_OFFSET + ROUNDUP(size, MIN_ALLOC_SIZE);
@@ -72,6 +75,8 @@ void *mem_alloc(size_t size) {
 	return use_mmap(total_size);
 }
 
+/** Deallocate memory.
+ * \param mem A pointer to the allocated memory. */
 void mem_free(void *mem) {
 	/* Validate input. */
 	if (!mem) return;
@@ -93,6 +98,9 @@ void mem_free(void *mem) {
 	}
 }
 
+/** Reallocate memory.
+ * \param mem A pointer to the allocated memory.
+ * \param size The size of the required memory (in bytes). */
 void *mem_realloc(void *mem, size_t size) {
 	/* Validate input. */
 	if (!mem) return NULL;
