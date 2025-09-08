@@ -288,6 +288,38 @@ void test_mem_alloc() {
 	}
 }
 
+void test_mem_free() {
+	{ // mmap
+		reset_arena();
+		size_t size = ARENA_SIZE * 2;
+		void *mem = mem_alloc(size);
+		arena_t *arena = global_arena();
+		size_t total_size =
+			MEM_OFFSET + ROUNDUP(size, MIN_ALLOC_SIZE);
+		mem_free(mem);
+		ASSERT(!arena->free_ptr_tails[SIZE_CLASS(total_size)]);
+	} 
+	{ // arena (and merge)
+		reset_arena();
+		size_t size = ARENA_SIZE / 32;
+		void *mem = mem_alloc(size);
+		void *mem2 = mem_alloc(size);
+		arena_t *arena = global_arena();
+		ptr_t *ptr = PTR_META(mem);
+		size_t total_size = 
+			MEM_OFFSET + ROUNDUP(size, MIN_ALLOC_SIZE);
+		
+		mem_free(mem);
+		ASSERT(!ptr->is_valid);
+		ASSERT(arena->free_ptr_tails[SIZE_CLASS(total_size)] == ptr);
+
+		//merge
+		mem_free(mem2);
+		ASSERT(arena->free_ptr_tails[SIZE_CLASS(total_size)] == ptr);
+		ASSERT(ptr->total_size == total_size * 2);
+	}
+}
+
 int main(void) {
 	test_use_arena();
 	test_add_to_free_list();
@@ -298,6 +330,7 @@ int main(void) {
 	test_realloc_in_place();
 	test_use_mmap();
 	test_mem_alloc();
+	test_mem_free();
 
 	test_print_results();
 	return 0;

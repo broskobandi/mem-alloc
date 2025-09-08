@@ -222,7 +222,8 @@ static inline void merge_neighbouring_ptrs(ptr_t *ptr, arena_t *arena) {
 		remove_from_free_list(ptr, arena);
 		ptr->prev_in_arena->total_size += ptr->total_size;
 		ptr->prev_in_arena->next_in_arena = ptr->next_in_arena;
-		ptr->next_in_arena->prev_in_arena = ptr->prev_in_arena;
+		if (ptr->next_in_arena)
+			ptr->next_in_arena->prev_in_arena = ptr->prev_in_arena;
 		remove_from_free_list(ptr->prev_in_arena, arena);
 		add_to_free_list(ptr->prev_in_arena, arena);
 	}
