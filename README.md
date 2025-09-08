@@ -12,8 +12,37 @@ The aim of the project is to provide a simple yet highly performant allocator fo
 - No loops (apart from the ones that may be performed by standard library functions, such as memcpy(), but even these calls are reduced to the bare minimum).
 - The automatic merge functionality increases the likelihood of reallocations in place which is also in support of good performance.
 
+## Installation
+```bash
+git clone https://github.com/broskobandi/mem-alloc.git &&
+cd mem-alloc &&
+make &&
+sudo make install
+```
+
+## Uninstall
+```bash
+cd mem-alloc &&
+sudo make uninstall
+```
+
+## Testing
+```bash
+cd mem-alloc &&
+make clean &&
+make test
+```
+
 ## Usage
 Please refer to example/example.c for details about the usage.
+Make sure to use -L/usr/local/lib -lmem-alloc compiler flags when 
+including the mem-alloc library in your project.
+
+## Documentation
+```bash
+cd mem-alloc &&
+make doc
+```
 
 ## Todo
 - Add free list for mmap allocations.

@@ -1,0 +1,49 @@
+\chapter{mem-\/alloc }
+\hypertarget{md_README}{}\label{md_README}\index{mem-\/alloc@{mem-\/alloc}}
+\label{md_README_autotoc_md0}%
+\Hypertarget{md_README_autotoc_md0}%
+
+
+Memory allocator written in C.\hypertarget{md_README_autotoc_md1}{}\doxysection{\texorpdfstring{Goal}{Goal}}\label{md_README_autotoc_md1}
+The aim of the project is to provide a simple yet highly performant allocator for moderately sized projects, such as simple game engines, that require fast dynamic memory allocation for many small objects.\hypertarget{md_README_autotoc_md2}{}\doxysection{\texorpdfstring{Features}{Features}}\label{md_README_autotoc_md2}
+
+\begin{DoxyItemize}
+\item By default, all allocations happen in an encapsulated thread-\/local static global buffer of size 128KB. This size can be adjusted by compiling the library with -\/DARENA\+\_\+\+SIZE\+\_\+\+CUSTOM=$<$custom\+\_\+size$>$ compiler flag. Thread locality is achieved by using the \+\_\+\+Thread\+\_\+local keyword which eliminates the need for any mutex locks which further aids performance.
+\item mmap() is used as a fallback allocation mechanism for sizes greater than ARENA\+\_\+\+SIZE or when the arena is full.
+\item A unique free list is maintained for every possible allocation size in the arena that ensures fast allocations of sizes that have once been freed.
+\item On freeing, neighbouring free pointers get merged automatically.
+\item No loops (apart from the ones that may be performed by standard library functions, such as memcpy(), but even these calls are reduced to the bare minimum).
+\item The automatic merge functionality increases the likelihood of reallocations in place which is also in support of good performance.
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md3}{}\doxysection{\texorpdfstring{Installation}{Installation}}\label{md_README_autotoc_md3}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{git\ clone\ https://github.com/broskobandi/mem-\/alloc.git\ \&\&}
+\DoxyCodeLine{cd\ mem-\/alloc\ \&\&}
+\DoxyCodeLine{make\ \&\&}
+\DoxyCodeLine{sudo\ make\ install}
+
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md4}{}\doxysection{\texorpdfstring{Uninstall}{Uninstall}}\label{md_README_autotoc_md4}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cd\ mem-\/alloc\ \&\&}
+\DoxyCodeLine{sudo\ make\ uninstall}
+
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md5}{}\doxysection{\texorpdfstring{Testing}{Testing}}\label{md_README_autotoc_md5}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cd\ mem-\/alloc\ \&\&}
+\DoxyCodeLine{make\ clean\ \&\&}
+\DoxyCodeLine{make\ test}
+
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md6}{}\doxysection{\texorpdfstring{Usage}{Usage}}\label{md_README_autotoc_md6}
+Please refer to \doxylink{example_8c}{example/example.\+c} for details about the usage.\hypertarget{md_README_autotoc_md7}{}\doxysection{\texorpdfstring{Todo}{Todo}}\label{md_README_autotoc_md7}
+
+\begin{DoxyItemize}
+\item Add free list for mmap allocations.
+\item Implement broader size classes.
+\item Make mmap fallback mechanism opt-\/out?
+\item Add documentation 
+\end{DoxyItemize}

@@ -1,0 +1,86 @@
+\doxysection{ptr Struct Reference}
+\hypertarget{structptr}{}\label{structptr}\index{ptr@{ptr}}
+
+
+{\ttfamily \#include $<$mem\+\_\+alloc\+\_\+utils.\+h$>$}
+
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structptr_a3c17a67bbb6910f7eac4f35b20189a59}{mem}}
+\item 
+size\+\_\+t \mbox{\hyperlink{structptr_aad91356fc26a29cfaa6ca3a66969daaa}{total\+\_\+size}}
+\item 
+\mbox{\hyperlink{mem__alloc__utils_8h_a6b9b826ca50c2f0495c9ce0b70b6c172}{ptr\+\_\+t}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structptr_a2a3239a38c5bee699187efce41b53d07}{next\+\_\+free}}
+\item 
+\mbox{\hyperlink{mem__alloc__utils_8h_a6b9b826ca50c2f0495c9ce0b70b6c172}{ptr\+\_\+t}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structptr_a65ff98b157d08c780e7f0ca264fcf59d}{prev\+\_\+free}}
+\item 
+\mbox{\hyperlink{mem__alloc__utils_8h_a6b9b826ca50c2f0495c9ce0b70b6c172}{ptr\+\_\+t}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structptr_a71605f5eea7aea5e808fa1d63ab83ee2}{next\+\_\+in\+\_\+arena}}
+\item 
+\mbox{\hyperlink{mem__alloc__utils_8h_a6b9b826ca50c2f0495c9ce0b70b6c172}{ptr\+\_\+t}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structptr_a0827a01b08507a6e2cce7756e219d710}{prev\+\_\+in\+\_\+arena}}
+\item 
+bool \mbox{\hyperlink{structptr_a84eb3588d91fdf99d559d08dee49e898}{is\+\_\+valid}}
+\item 
+bool \mbox{\hyperlink{structptr_aaeb7f5397d80ea61be9b15d4af4bc8e9}{is\+\_\+mmap}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Ptr struct definition. 
+
+\label{doc-variable-members}
+\Hypertarget{structptr_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{structptr_aaeb7f5397d80ea61be9b15d4af4bc8e9}\index{ptr@{ptr}!is\_mmap@{is\_mmap}}
+\index{is\_mmap@{is\_mmap}!ptr@{ptr}}
+\doxysubsubsection{\texorpdfstring{is\_mmap}{is\_mmap}}
+{\footnotesize\ttfamily \label{structptr_aaeb7f5397d80ea61be9b15d4af4bc8e9} 
+bool ptr\+::is\+\_\+mmap}
+
+Boolean indicating whether the memory was allocated in the arena or in thea heap using mmap(). \Hypertarget{structptr_a84eb3588d91fdf99d559d08dee49e898}\index{ptr@{ptr}!is\_valid@{is\_valid}}
+\index{is\_valid@{is\_valid}!ptr@{ptr}}
+\doxysubsubsection{\texorpdfstring{is\_valid}{is\_valid}}
+{\footnotesize\ttfamily \label{structptr_a84eb3588d91fdf99d559d08dee49e898} 
+bool ptr\+::is\+\_\+valid}
+
+Boolean indicating whether the pointer is valid or not. It is set to false when the pointer is freed. \Hypertarget{structptr_a3c17a67bbb6910f7eac4f35b20189a59}\index{ptr@{ptr}!mem@{mem}}
+\index{mem@{mem}!ptr@{ptr}}
+\doxysubsubsection{\texorpdfstring{mem}{mem}}
+{\footnotesize\ttfamily \label{structptr_a3c17a67bbb6910f7eac4f35b20189a59} 
+void\texorpdfstring{$\ast$}{*} ptr\+::mem}
+
+Pointer to the user owned block of memory. \Hypertarget{structptr_a2a3239a38c5bee699187efce41b53d07}\index{ptr@{ptr}!next\_free@{next\_free}}
+\index{next\_free@{next\_free}!ptr@{ptr}}
+\doxysubsubsection{\texorpdfstring{next\_free}{next\_free}}
+{\footnotesize\ttfamily \label{structptr_a2a3239a38c5bee699187efce41b53d07} 
+\mbox{\hyperlink{mem__alloc__utils_8h_a6b9b826ca50c2f0495c9ce0b70b6c172}{ptr\+\_\+t}}\texorpdfstring{$\ast$}{*} ptr\+::next\+\_\+free}
+
+The next free pointer. Only relevant if the pointer was freed. \Hypertarget{structptr_a71605f5eea7aea5e808fa1d63ab83ee2}\index{ptr@{ptr}!next\_in\_arena@{next\_in\_arena}}
+\index{next\_in\_arena@{next\_in\_arena}!ptr@{ptr}}
+\doxysubsubsection{\texorpdfstring{next\_in\_arena}{next\_in\_arena}}
+{\footnotesize\ttfamily \label{structptr_a71605f5eea7aea5e808fa1d63ab83ee2} 
+\mbox{\hyperlink{mem__alloc__utils_8h_a6b9b826ca50c2f0495c9ce0b70b6c172}{ptr\+\_\+t}}\texorpdfstring{$\ast$}{*} ptr\+::next\+\_\+in\+\_\+arena}
+
+Next ptr in arena. Only relevant if the pointer is not int the free list. \Hypertarget{structptr_a65ff98b157d08c780e7f0ca264fcf59d}\index{ptr@{ptr}!prev\_free@{prev\_free}}
+\index{prev\_free@{prev\_free}!ptr@{ptr}}
+\doxysubsubsection{\texorpdfstring{prev\_free}{prev\_free}}
+{\footnotesize\ttfamily \label{structptr_a65ff98b157d08c780e7f0ca264fcf59d} 
+\mbox{\hyperlink{mem__alloc__utils_8h_a6b9b826ca50c2f0495c9ce0b70b6c172}{ptr\+\_\+t}}\texorpdfstring{$\ast$}{*} ptr\+::prev\+\_\+free}
+
+The previous free pointer. Only relevant if the pointer was freed. \Hypertarget{structptr_a0827a01b08507a6e2cce7756e219d710}\index{ptr@{ptr}!prev\_in\_arena@{prev\_in\_arena}}
+\index{prev\_in\_arena@{prev\_in\_arena}!ptr@{ptr}}
+\doxysubsubsection{\texorpdfstring{prev\_in\_arena}{prev\_in\_arena}}
+{\footnotesize\ttfamily \label{structptr_a0827a01b08507a6e2cce7756e219d710} 
+\mbox{\hyperlink{mem__alloc__utils_8h_a6b9b826ca50c2f0495c9ce0b70b6c172}{ptr\+\_\+t}}\texorpdfstring{$\ast$}{*} ptr\+::prev\+\_\+in\+\_\+arena}
+
+Previous ptr in arena. Only relevant if the pointer is not int the free list. \Hypertarget{structptr_aad91356fc26a29cfaa6ca3a66969daaa}\index{ptr@{ptr}!total\_size@{total\_size}}
+\index{total\_size@{total\_size}!ptr@{ptr}}
+\doxysubsubsection{\texorpdfstring{total\_size}{total\_size}}
+{\footnotesize\ttfamily \label{structptr_aad91356fc26a29cfaa6ca3a66969daaa} 
+size\+\_\+t ptr\+::total\+\_\+size}
+
+The (aligned and rounded up) sum of the user requested memory size and the metadata size. 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\mbox{\hyperlink{mem__alloc__utils_8h}{mem\+\_\+alloc\+\_\+utils.\+h}}\end{DoxyCompactItemize}

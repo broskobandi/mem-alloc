@@ -1,0 +1,98 @@
+\doxysection{src/mem\+\_\+alloc.c File Reference}
+\hypertarget{mem__alloc_8c}{}\label{mem__alloc_8c}\index{src/mem\_alloc.c@{src/mem\_alloc.c}}
+
+
+Implementation for the mem\+\_\+alloc library.  
+
+
+{\ttfamily \#include "{}mem\+\_\+alloc\+\_\+utils.\+h"{}}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{mem__alloc__utils_8h_a6511b561eba6017d3f09e9ef44b6b500}{arena\+\_\+t}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{mem__alloc_8c_a78041a67cfa879c68471be5411386d0d}{global\+\_\+arena}} ()
+\item 
+void \mbox{\hyperlink{mem__alloc_8c_a5810db035e2b43da6184f9df1b89c064}{reset\+\_\+arena}} ()
+\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{mem__alloc_8c_a20737e5c674855c0e78c7d8e5e677355}{mem\+\_\+alloc}} (size\+\_\+t size)
+\item 
+void \mbox{\hyperlink{mem__alloc_8c_a2fd7aa1adf6e394d3be7c7734e7df41a}{mem\+\_\+free}} (void \texorpdfstring{$\ast$}{*}mem)
+\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{mem__alloc_8c_ac96f37c4b139d7dee963fc6b00d0ec23}{mem\+\_\+realloc}} (void \texorpdfstring{$\ast$}{*}mem, size\+\_\+t size)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+static \+\_\+\+Thread\+\_\+local \mbox{\hyperlink{mem__alloc__utils_8h_a6511b561eba6017d3f09e9ef44b6b500}{arena\+\_\+t}} \mbox{\hyperlink{mem__alloc_8c_a1c4cb754930155ef52662143f5c11160}{g\+\_\+arena}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Implementation for the mem\+\_\+alloc library. 
+
+This file contains the definitions of types, structs, and public functions. 
+
+\label{doc-func-members}
+\Hypertarget{mem__alloc_8c_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{mem__alloc_8c_a78041a67cfa879c68471be5411386d0d}\index{mem\_alloc.c@{mem\_alloc.c}!global\_arena@{global\_arena}}
+\index{global\_arena@{global\_arena}!mem\_alloc.c@{mem\_alloc.c}}
+\doxysubsubsection{\texorpdfstring{global\_arena()}{global\_arena()}}
+{\footnotesize\ttfamily \label{mem__alloc_8c_a78041a67cfa879c68471be5411386d0d} 
+\mbox{\hyperlink{mem__alloc__utils_8h_a6511b561eba6017d3f09e9ef44b6b500}{arena\+\_\+t}} \texorpdfstring{$\ast$}{*} global\+\_\+arena (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{mem__alloc_8c_a20737e5c674855c0e78c7d8e5e677355}\index{mem\_alloc.c@{mem\_alloc.c}!mem\_alloc@{mem\_alloc}}
+\index{mem\_alloc@{mem\_alloc}!mem\_alloc.c@{mem\_alloc.c}}
+\doxysubsubsection{\texorpdfstring{mem\_alloc()}{mem\_alloc()}}
+{\footnotesize\ttfamily \label{mem__alloc_8c_a20737e5c674855c0e78c7d8e5e677355} 
+void \texorpdfstring{$\ast$}{*} mem\+\_\+alloc (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{size}{}\end{DoxyParamCaption})}
+
+Allocate memory. 
+\begin{DoxyParams}{Parameters}
+{\em size} & The size of memory (in bytes) to allocate. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The pointer to the allocated memory. 
+\end{DoxyReturn}
+\Hypertarget{mem__alloc_8c_a2fd7aa1adf6e394d3be7c7734e7df41a}\index{mem\_alloc.c@{mem\_alloc.c}!mem\_free@{mem\_free}}
+\index{mem\_free@{mem\_free}!mem\_alloc.c@{mem\_alloc.c}}
+\doxysubsubsection{\texorpdfstring{mem\_free()}{mem\_free()}}
+{\footnotesize\ttfamily \label{mem__alloc_8c_a2fd7aa1adf6e394d3be7c7734e7df41a} 
+void mem\+\_\+free (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\ast$}{*}}]{mem}{}\end{DoxyParamCaption})}
+
+Deallocate memory. 
+\begin{DoxyParams}{Parameters}
+{\em mem} & A pointer to the allocated memory. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{mem__alloc_8c_ac96f37c4b139d7dee963fc6b00d0ec23}\index{mem\_alloc.c@{mem\_alloc.c}!mem\_realloc@{mem\_realloc}}
+\index{mem\_realloc@{mem\_realloc}!mem\_alloc.c@{mem\_alloc.c}}
+\doxysubsubsection{\texorpdfstring{mem\_realloc()}{mem\_realloc()}}
+{\footnotesize\ttfamily \label{mem__alloc_8c_ac96f37c4b139d7dee963fc6b00d0ec23} 
+void \texorpdfstring{$\ast$}{*} mem\+\_\+realloc (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\ast$}{*}}]{mem}{, }\item[{size\+\_\+t}]{size}{}\end{DoxyParamCaption})}
+
+Reallocate memory. 
+\begin{DoxyParams}{Parameters}
+{\em mem} & A pointer to the allocated memory. \\
+\hline
+{\em size} & The size of the required memory (in bytes). \\
+\hline
+\end{DoxyParams}
+\Hypertarget{mem__alloc_8c_a5810db035e2b43da6184f9df1b89c064}\index{mem\_alloc.c@{mem\_alloc.c}!reset\_arena@{reset\_arena}}
+\index{reset\_arena@{reset\_arena}!mem\_alloc.c@{mem\_alloc.c}}
+\doxysubsubsection{\texorpdfstring{reset\_arena()}{reset\_arena()}}
+{\footnotesize\ttfamily \label{mem__alloc_8c_a5810db035e2b43da6184f9df1b89c064} 
+void reset\+\_\+arena (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+\label{doc-var-members}
+\Hypertarget{mem__alloc_8c_doc-var-members}
+\doxysubsection{Variable Documentation}
+\Hypertarget{mem__alloc_8c_a1c4cb754930155ef52662143f5c11160}\index{mem\_alloc.c@{mem\_alloc.c}!g\_arena@{g\_arena}}
+\index{g\_arena@{g\_arena}!mem\_alloc.c@{mem\_alloc.c}}
+\doxysubsubsection{\texorpdfstring{g\_arena}{g\_arena}}
+{\footnotesize\ttfamily \label{mem__alloc_8c_a1c4cb754930155ef52662143f5c11160} 
+\+\_\+\+Thread\+\_\+local \mbox{\hyperlink{mem__alloc__utils_8h_a6511b561eba6017d3f09e9ef44b6b500}{arena\+\_\+t}} g\+\_\+arena\hspace{0.3cm}{\ttfamily [static]}}
+
+Thread local static global instance of the arena. 

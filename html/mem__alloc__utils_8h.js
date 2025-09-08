@@ -1,0 +1,26 @@
+var mem__alloc__utils_8h =
+[
+    [ "ptr", "structptr.html", "structptr" ],
+    [ "arena", "structarena.html", "structarena" ],
+    [ "ARENA_SIZE", "mem__alloc__utils_8h.html#a716f9c94eab29ae62af2ce55bf23db20", null ],
+    [ "MAX_NUM_FREE_MMAP_PTRS", "mem__alloc__utils_8h.html#af873b2b87605f5b76b0ea9bee9104229", null ],
+    [ "MEM_OFFSET", "mem__alloc__utils_8h.html#ab876507b6bfd5d4f9d24320bb1f336d1", null ],
+    [ "MIN_ALLOC_SIZE", "mem__alloc__utils_8h.html#adc61bfb7f4679bc2eae735449c406ba8", null ],
+    [ "MMAP", "mem__alloc__utils_8h.html#a8b8dd6cbcc42cd3de8514a8077e31ccb", null ],
+    [ "NUM_SIZE_CLASSES", "mem__alloc__utils_8h.html#aebe827a717f3560e566b903cb50d45b6", null ],
+    [ "PTR_META", "mem__alloc__utils_8h.html#a38e739b71d73d5e6c108839be53c494f", null ],
+    [ "ROUNDUP", "mem__alloc__utils_8h.html#a61dd3ed223b771e293392fb7ff7bf910", null ],
+    [ "SIZE_CLASS", "mem__alloc__utils_8h.html#a26cc0bfded51d250cd33b75dc44e603d", null ],
+    [ "arena_t", "mem__alloc__utils_8h.html#a6511b561eba6017d3f09e9ef44b6b500", null ],
+    [ "ptr_t", "mem__alloc__utils_8h.html#a6b9b826ca50c2f0495c9ce0b70b6c172", null ],
+    [ "add_to_free_list", "mem__alloc__utils_8h.html#a1b2b3697a33b91e7d8ce67e31903ff98", null ],
+    [ "global_arena", "mem__alloc__utils_8h.html#a78041a67cfa879c68471be5411386d0d", null ],
+    [ "merge_neighbouring_ptrs", "mem__alloc__utils_8h.html#aa28d1bd2c68bea9d10765c8133ae887b", null ],
+    [ "move_ptr", "mem__alloc__utils_8h.html#ab705b26c82012fd743f6a2e87786c28d", null ],
+    [ "realloc_in_place", "mem__alloc__utils_8h.html#a3df2794c6fe1084f02236a7b24a104f6", null ],
+    [ "remove_from_free_list", "mem__alloc__utils_8h.html#adb8ca0934997cc504c7faf4f1e0f2eb6", null ],
+    [ "reset_arena", "mem__alloc__utils_8h.html#a5810db035e2b43da6184f9df1b89c064", null ],
+    [ "use_arena", "mem__alloc__utils_8h.html#a7d0f74ddef3135cf0bd485bd30d9a387", null ],
+    [ "use_free_list", "mem__alloc__utils_8h.html#ab7af48d6cccffa1d1d176f62cff97841", null ],
+    [ "use_mmap", "mem__alloc__utils_8h.html#af500fa49897288e8a9c5515174c3de46", null ]
+];
