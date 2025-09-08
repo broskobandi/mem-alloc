@@ -172,15 +172,61 @@ void test_move_ptr() {
 }
 
 void test_realloc_in_place() {
-	// arena_t arena = {0};
-	// size_t original_size = MEM_OFFSET + MIN_ALLOC_SIZE;
-	// void *mem = use_arena(original_size, &arena);
-	// ptr_t *ptr = PTR_META(mem);
-	//
-	// size_t new_size = original_size * 2;
-	// void *mem_new = realloc_in_place(ptr, new_size);
-	//
-	// ASSERT()
+	{ // Current size if enough
+		arena_t arena = {0};
+		size_t original_size = MEM_OFFSET + MIN_ALLOC_SIZE;
+		size_t new_size = original_size;
+		void *mem = use_arena(original_size, &arena);
+		ptr_t *ptr = PTR_META(mem);
+		void *new_mem = realloc_in_place(ptr, new_size, &arena);
+		ptr_t *new_ptr = PTR_META(new_mem);
+		ASSERT(new_ptr->total_size == ptr->total_size);
+	}
+	{ // Next ptr is free and is bigger than needed
+		arena_t arena = {0};
+		size_t original_size = MEM_OFFSET + MIN_ALLOC_SIZE;
+		size_t new_size = original_size * 2;
+		size_t extra_size_needed = new_size - original_size;
+		void *mem = use_arena(original_size, &arena);
+		ptr_t *ptr = PTR_META(mem);
+		void *mem2 = use_arena(original_size * 4, &arena);
+		ptr_t *ptr2 = PTR_META(mem2);
+		add_to_free_list(ptr2, &arena);
+
+		void *new_mem = realloc_in_place(ptr, new_size, &arena);
+		ptr_t *new_ptr = PTR_META(new_mem);
+		ASSERT(new_mem == mem);
+		ASSERT(ptr->total_size == original_size + extra_size_needed);
+		size_t ptr_2_new_size = original_size * 4 - extra_size_needed;
+		ptr_t *free_tail =
+			arena.free_ptr_tails[SIZE_CLASS(ptr_2_new_size)];
+		ASSERT(free_tail);
+		ASSERT(free_tail->prev_in_arena == new_ptr);
+		ASSERT(free_tail->total_size == ptr_2_new_size);
+	}
+	{ // Next ptr is free and is just as big as needed
+		arena_t arena = {0};
+		size_t original_size = MEM_OFFSET + MIN_ALLOC_SIZE;
+		size_t new_size = original_size * 2;
+		void *mem = use_arena(original_size, &arena);
+		ptr_t *ptr = PTR_META(mem);
+		void *mem2 = use_arena(original_size, &arena);
+		ptr_t *ptr2 = PTR_META(mem2);
+		add_to_free_list(ptr2, &arena);
+		realloc_in_place(ptr, new_size, &arena);
+		ASSERT(ptr->total_size == original_size * 2);
+		ASSERT(!arena.free_ptr_tails[SIZE_CLASS(original_size)]);
+	}
+	{ // There is no next pointer
+		arena_t arena = {0};
+		size_t original_size = MEM_OFFSET + MIN_ALLOC_SIZE;
+		size_t new_size = original_size * 2;
+		void *mem = use_arena(original_size, &arena);
+		ptr_t *ptr = PTR_META(mem);
+		realloc_in_place(ptr, new_size, &arena);
+		ASSERT(ptr->total_size == new_size);
+		ASSERT(arena.offset == new_size);
+	}
 }
 
 int main(void) {
@@ -189,6 +235,8 @@ int main(void) {
 	test_use_free_list();
 	test_remove_from_free_list();
 	test_megre_neighbouring_ptrs();
+	test_move_ptr();
+	test_realloc_in_place();
 
 	test_print_results();
 	return 0;

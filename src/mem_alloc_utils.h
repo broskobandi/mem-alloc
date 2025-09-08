@@ -222,9 +222,10 @@ static inline void merge_neighbouring_ptrs(ptr_t *ptr, arena_t *arena) {
 }
 
 static inline void move_ptr(ptr_t **ptr, size_t size) {
-	*ptr = (ptr_t*)((unsigned char*)(*ptr) + size);
-	(*ptr)->mem =
-		(ptr_t*)((unsigned char*)(*ptr)->mem + size);
+	ptr_t *new_ptr = (ptr_t*)((unsigned char*)*ptr + size);
+	memcpy(new_ptr, *ptr, sizeof(ptr_t));
+	*ptr = new_ptr;
+	(*ptr)->mem = ((unsigned char*)*ptr + MEM_OFFSET);
 	if ((*ptr)->next_in_arena)
 		(*ptr)->next_in_arena->prev_in_arena = *ptr;
 	if ((*ptr)->prev_in_arena)
@@ -238,6 +239,7 @@ static inline void move_ptr(ptr_t **ptr, size_t size) {
 static inline void *realloc_in_place(
 	ptr_t *ptr, size_t total_size, arena_t *arena
 ) {
+	/* If current size is enough */
 	if (ptr->total_size >= total_size)
 		return ptr->mem;
 
@@ -245,19 +247,35 @@ static inline void *realloc_in_place(
 	size_t extra_size_needed =
 		ROUNDUP(total_size - ptr->total_size, MIN_ALLOC_SIZE);
 
+	/* If next pointer is free and is bigger than needed */
 	if (
 		*next && !(*next)->is_valid &&
-		(*next)->total_size >= extra_size_needed &&
-		(*next)->total_size - extra_size_needed >= MIN_ALLOC_SIZE
+		(*next)->total_size >=
+		extra_size_needed + MEM_OFFSET + MIN_ALLOC_SIZE
 	) {
 		move_ptr(next, extra_size_needed);
+		(*next)->total_size -= extra_size_needed;
+		remove_from_free_list(*next, arena);
+		add_to_free_list(*next, arena);
 		ptr->total_size += extra_size_needed;
 		return ptr->mem;
 	}
 
+	/* If next pointer is free and is just as big as needed */
+	if (
+		*next && !(*next)->is_valid &&
+		(*next)->total_size == extra_size_needed
+	) {
+		remove_from_free_list(*next, arena);
+		ptr->total_size += extra_size_needed;
+		arena->offset += extra_size_needed;
+		return ptr->mem;
+	}
+
+	/* If there is no next pointer. */
 	if (!*next && arena->offset + extra_size_needed <= ARENA_SIZE) {
 		ptr->total_size += extra_size_needed;
-		(*next)->total_size -= extra_size_needed;
+		arena->offset += extra_size_needed;
 		return ptr->mem;
 	}
 
