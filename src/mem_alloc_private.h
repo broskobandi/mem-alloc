@@ -72,6 +72,19 @@ static inline void *use_mmap(size_t total_size) {
 	return ptr->mem;
 }
 
+static inline void add_to_free_list(ptr_t *ptr, arena_t *arena) {
+	size_t size = ptr->total_size - MEM_OFFSET;
+	ptr_t **free_tail = 
+		&arena->free_ptr_tails[SIZE_CLASS(size)];
+	if (!*free_tail) {
+		*free_tail = ptr;
+	} else {
+		ptr->prev_free = *free_tail;
+		(*free_tail)->next_free = ptr;
+		*free_tail = (*free_tail)->next_free;
+	}
+}
+
 static inline void *use_arena(size_t total_size, arena_t *arena) {
 	ptr_t *ptr = (ptr_t*)&arena->buff[arena->offset];
 	ptr->mem = (void*)((unsigned char*)ptr + MEM_OFFSET);
