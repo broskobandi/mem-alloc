@@ -34,7 +34,7 @@ test: $(TEST_EXE)
 	./$<
 
 clean:
-	rm -rf $(BUILD_DIR) $(DOC_DIR)
+	rm -rf $(BUILD_DIR) $(DOC_DIR) compile_commands.json
 
 install:
 	cp $(LIB_A) $(LIB_INSTALL_DIR)
