@@ -93,6 +93,8 @@ void mem_free(void *mem) {
 		ptr->is_valid = false;
 		munmap(ptr, ptr->total_size);
 	} else {
+		// this should first check if ptr is the last in arena
+		// and simply adjust the offset if so.
 		add_to_free_list(ptr, &g_arena);
 		merge_neighbouring_ptrs(ptr, &g_arena);
 	}
