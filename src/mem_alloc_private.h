@@ -6,9 +6,10 @@
 #include <string.h>
 #include <sys/mman.h>
 #include <stdbool.h>
+#include <SDL2/SDL.h>
 
 #define ARENA_SIZE\
-	1024LU * 128
+	1024LU * 127
 #define MIN_ALLOC\
 	alignof(max_align_t)
 #define ROUNDUP(size, to)\
@@ -39,8 +40,8 @@ struct ptr {
 struct arena {
 	alignas(max_align_t) unsigned char buff[ARENA_SIZE];
 	ptr_t *free_ptr_tails[NUM_SIZE_CLASSES];
-	size_t offset;
 	ptr_t *ptrs_tail;
+	size_t offset;
 };
 
 static inline void *use_free_list(size_t total_size, arena_t *arena) {
@@ -71,7 +72,6 @@ static inline void *use_mmap(size_t total_size) {
 	return ptr->mem;
 }
 
-#include <stdio.h>
 static inline void *use_arena(size_t total_size, arena_t *arena) {
 	ptr_t *ptr = (ptr_t*)&arena->buff[arena->offset];
 	ptr->mem = (void*)((unsigned char*)ptr + MEM_OFFSET);
@@ -82,6 +82,7 @@ static inline void *use_arena(size_t total_size, arena_t *arena) {
 	} else {
 		ptr->prev = arena->ptrs_tail;
 		arena->ptrs_tail->next = ptr;
+		arena->ptrs_tail = arena->ptrs_tail->next;
 	}
 	ptr->total_size = total_size;
 	ptr->next = NULL;

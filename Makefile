@@ -29,6 +29,7 @@ LIB_SO := $(BUILD_DIR)/lib$(PROJECT).so
 
 all: $(LIB_A) $(LIB_SO)
 
+test: CC = bear -- $(FIND_CC)
 test: $(TEST_EXE)
 	./$<
 
