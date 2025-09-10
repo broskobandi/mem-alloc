@@ -7,6 +7,7 @@
 #include <sys/mman.h>
 #include <stdbool.h>
 #include <SDL2/SDL.h>
+#include <unistd.h>
 
 #define ARENA_SIZE\
 	1024LU * 127
@@ -22,6 +23,8 @@
 	(size) / MIN_ALLOC
 #define PTR(mem)\
 	(ptr_t*)((unsigned char*)mem - MEM_OFFSET)
+#define RESET_ARENA\
+	memset(global_arena(), 0, sizeof(arena_t));
 
 typedef struct arena arena_t;
 typedef struct ptr ptr_t;
@@ -52,6 +55,7 @@ static inline void *use_free_list(size_t total_size, arena_t *arena) {
 	return mem;
 }
 
+#include <stdio.h>
 static inline void *use_mmap(size_t total_size) {
 	ptr_t *ptr =
 		(ptr_t*)mmap(
@@ -61,7 +65,7 @@ static inline void *use_mmap(size_t total_size) {
 	if (!ptr)
 		return NULL;
 	ptr->mem = (void*)((unsigned char*)ptr + MEM_OFFSET);
-	ptr->total_size = total_size;
+	ptr->total_size = ROUNDUP(total_size, (size_t)getpagesize());
 	ptr->next = NULL;
 	ptr->prev = NULL;
 	ptr->next_free = NULL;
@@ -106,5 +110,7 @@ static inline void *use_arena(size_t total_size, arena_t *arena) {
 	
 	return ptr->mem;
 }
+
+arena_t *global_arena();
 
 #endif
