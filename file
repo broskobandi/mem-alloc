@@ -1,1 +1,0 @@
-/usr/bin/clang -c -fPIC -Wall -Wextra -Werror -Wconversion -Wunused-result -Iinclude -Isrc src/mem_alloc.c -o build/obj/mem_alloc.o

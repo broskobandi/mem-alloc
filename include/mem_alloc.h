@@ -4,7 +4,7 @@
 #include <stddef.h> /* For size_t */
 
 void *mem_alloc(size_t size);
-void mem_free(void *ptr);
-void *mem_realloc(void *ptr, size_t new_size);
+int mem_free(void *ptr);
+void *mem_realloc(void *ptr, size_t size);
 
 #endif

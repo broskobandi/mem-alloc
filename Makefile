@@ -1,45 +1,44 @@
 # Project
-PROJECT := mem_alloc
-FIND_CC := $(shell command -v clang || command -v gcc)
-CC := $(FIND_CC)
-CFLAGS := -Wall -Wextra -Werror -Wconversion -Wunused-result
+PROJECT = mem_alloc
+CC := $(shell command -v clang || command -v gcc)
+CFLAGS := -Wall -Wextra -Werror -Wunused-result -Wconversion
 CPPFLAGS := -Iinclude -Isrc
 
 # Dirs
+BUILD_DIR := build
 SRC_DIR := src
 INC_DIR := include
-BUILD_DIR := build
-OBJ_DIR := $(BUILD_DIR)/obj
 TEST_DIR := test
-DOC_DIR := doc
+OBJ_DIR := $(BUILD_DIR)/obj
 LIB_INSTALL_DIR := /usr/local/lib
 INC_INSTALL_DIR := /usr/local/include
+DOC_DIR := doc
 
 # Files
 SRC := $(wildcard $(SRC_DIR)/*.c)
 INC_PRIV := $(wildcard $(SRC_DIR)/*.h)
-OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+INC := $(INC_DIR)/$(PROJECT).h
 TEST_MAIN := $(TEST_DIR)/test.c
 TEST_EXE := $(BUILD_DIR)/test
-LIB_A := $(BUILD_DIR)/lib$(PROJECT).a
 LIB_SO := $(BUILD_DIR)/lib$(PROJECT).so
+LIB_A := $(BUILD_DIR)/lib$(PROJECT).a
+OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 # Rules
 .PHONY: all test clean install uninstall doc
 
 all: $(LIB_A) $(LIB_SO)
 
-test: CC = bear -- $(FIND_CC)
 test: $(TEST_EXE)
 	./$<
 
 clean:
-	rm -rf $(BUILD_DIR) $(DOC_DIR) compile_commands.json
+	rm -rf $(BUILD_DIR) $(DOC_DIR)
 
 install:
-	cp $(LIB_A) $(LIB_INSTALL_DIR)
-	cp $(LIB_SO) $(LIB_INSTALL_DIR)
-	cp $(INC) $(INC_INSTALL_DIR)
+	cp $(LIB_INSTALL_DIR) $(LIB_A)
+	cp $(LIB_INSTALL_DIR) $(LIB_SO)
+	cp $(INC_INSTALL_DIR) $(INC)
 	ldconfig
 
 uninstall:
@@ -50,9 +49,6 @@ uninstall:
 doc:
 	doxygen
 
-$(TEST_EXE): $(TEST_MAIN) $(OBJ) | $(BUILD_DIR)
-	$(CC) $(CFLAGS) $(CPPFLAGS) $^ -o $@
-
 $(LIB_A): $(OBJ) | $(BUILD_DIR)
 	ar rcs $@ $^
 
@@ -62,8 +58,11 @@ $(LIB_SO): $(OBJ) | $(BUILD_DIR)
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(INC) $(INC_PRIV) | $(OBJ_DIR)
 	$(CC) -c -fPIC $(CFLAGS) $(CPPFLAGS) $< -o $@
 
-$(BUILD_DIR):
-	mkdir -p $@
+$(TEST_EXE): $(TEST_MAIN) $(OBJ) | $(BUILD_DIR)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $^ -o $@
 
 $(OBJ_DIR):
+	mkdir -p $@
+
+$(BUILD_DIR):
 	mkdir -p $@
