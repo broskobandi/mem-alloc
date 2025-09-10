@@ -65,10 +65,49 @@ void test_add_to_free_list() {
 	ASSERT(ptr3->prev_free != ptr2);
 }
 
+void test_use_free_list() {
+	arena_t arena = {0};
+	const size_t SIZE = ARENA_SIZE / 32;
+	size_t total_size = MEM_OFFSET + ROUNDUP(SIZE, MIN_ALLOC);
+	void *mem = use_arena(total_size, &arena);
+	ptr_t *ptr = PTR(mem);
+	add_to_free_list(ptr, &arena);
+	void *mem2 = use_arena(total_size, &arena);
+	ptr_t *ptr2 = PTR(mem2);
+	add_to_free_list(ptr2, &arena);
+	void *mem3 = use_arena(total_size, &arena);
+	ptr_t *ptr3 = PTR(mem3);
+	add_to_free_list(ptr3, &arena);
+
+	void *mem4 = use_free_list(total_size, &arena);
+	ptr_t *ptr4 = PTR(mem4);
+
+	ASSERT(ptr4 == ptr3);
+	ASSERT(ptr4->prev_free == ptr2);
+	ASSERT(ptr2->next_free == ptr3);
+	ASSERT(arena.free_ptr_tails[SIZE_CLASS(SIZE)] == ptr2);
+
+	void *mem5 = use_free_list(total_size, &arena);
+	ptr_t *ptr5 = PTR(mem5);
+
+	ASSERT(ptr5 == ptr2);
+	ASSERT(ptr5->prev_free == ptr);
+	ASSERT(ptr->next_free == ptr2);
+	ASSERT(arena.free_ptr_tails[SIZE_CLASS(SIZE)] == ptr);
+
+	void *mem6 = use_free_list(total_size, &arena);
+	ptr_t *ptr6 = PTR(mem6);
+
+	ASSERT(ptr6 == ptr);
+	ASSERT(!ptr6->prev_free);
+	ASSERT(!arena.free_ptr_tails[SIZE_CLASS(SIZE)]);
+}
+
 int main(void) {
 	test_use_arena();
 	test_use_mmap();
 	test_add_to_free_list();
+	test_use_free_list();
 
 	test_print_results();
 	return 0;
