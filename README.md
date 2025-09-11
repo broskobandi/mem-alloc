@@ -84,7 +84,7 @@ Generating the documentation requires doxygen to be installed.
 cd mem_alloc &&
 make doc &&
 ```
-Then open html/index.html to access the newly generated documentation.
+Then open doc/html/index.html to access the newly generated documentation.
 ## Usage
 ```c
 /* Include the library. */
