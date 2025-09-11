@@ -1,6 +1,23 @@
 #include "mem_alloc_private.h"
 
 _Thread_local static arena_t g_arena;
+_Thread_local static int g_is_arena_full;
+
+#include <stdio.h>
+static inline void warn_arena_full() {
+	if (!g_is_arena_full) {
+		g_is_arena_full = 1;
+		printf("[MEM_ALLOC WARNING]:\n");
+		printf("\tUsing mmap from now on.\n");
+	}
+}
+
+#ifndef NDEBUG
+#define WARN_ARENA_FULL\
+	warn_arena_full()
+#else
+#define WARN_ARENA_FULL
+#endif
 
 arena_t *global_arena() {
 	return &g_arena;
@@ -15,6 +32,7 @@ void *mem_alloc(size_t size) {
 	ptr_t **free_tail = &g_arena.free_ptr_tails[SIZE_CLASS(size)];
 
 	if (g_arena.offset + total_size > ARENA_SIZE) {
+		WARN_ARENA_FULL;
 		return use_mmap(total_size);
 	} else if (*free_tail) {
 		ptr_t *ptr = *free_tail;
