@@ -26,9 +26,12 @@ LIB_A := $(BUILD_DIR)/lib$(PROJECT).a
 OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 # Rules
-.PHONY: all test clean install uninstall doc
+.PHONY: all test clean install uninstall doc debug
 
+all: CPPFLAGS += -DNDEBUG
 all: $(LIB_A) $(LIB_SO)
+
+debug: $(LIB_A) $(LIB_SO)
 
 test: CC := bear -- $(FIND_CC)
 test: $(TEST_EXE)

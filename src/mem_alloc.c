@@ -1,9 +1,11 @@
 #include "mem_alloc_private.h"
 
 _Thread_local static arena_t g_arena;
-_Thread_local static int g_is_arena_full;
 
 #include <stdio.h>
+
+#ifndef NDEBUG
+_Thread_local static int g_is_arena_full;
 static inline void warn_arena_full() {
 	if (!g_is_arena_full) {
 		g_is_arena_full = 1;
@@ -11,8 +13,6 @@ static inline void warn_arena_full() {
 		printf("\tUsing mmap from now on.\n");
 	}
 }
-
-#ifndef NDEBUG
 #define WARN_ARENA_FULL\
 	warn_arena_full()
 #else
