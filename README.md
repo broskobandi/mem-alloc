@@ -1,4 +1,4 @@
-# mem_alloc
+# mem-alloc
 ## Memory allocator written in C
 The goal of the project is to provide a highly performant allocator for 
 moderately sized programs, such as simple game engines, that require frequent
@@ -59,7 +59,7 @@ information during runtime, such as the size of the arena and the moment
 when changing to heap allocations occurs.
 ## Installation
 ```bash
-git clone https://github.com/broskobandi/mem_alloc.git &&
+git clone https://github.com/broskobandi/mem-alloc.git &&
 cd mem_alloc &&
 make &&
 sudo make install
