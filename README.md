@@ -78,6 +78,13 @@ make clean &&
 make test &&
 make clean
 ```
+## Documentation
+Generating the documentation requires doxygen to be installed.
+```bash
+cd mem_alloc &&
+make doc &&
+```
+Then open html/index.html to access the newly generated documentation.
 ## Usage
 ```c
 /* Include the library. */
