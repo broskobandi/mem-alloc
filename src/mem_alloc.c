@@ -1,10 +1,47 @@
+/*
+MIT License
+
+Copyright (c) 2025 broskobandi
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+/** \file src/mem_alloc.c
+ * \brief Implementation of the mem_alloc library.
+ * \details This file contains the definitions of public funcions, galobals,
+ * and debug macros for the mem_alloc library. */
+
 #include "mem_alloc_private.h"
 
+/******************************************************************************
+ * Global variables
+ *****************************************************************************/
+
+/** The global arena to be used as the default allocator. */
 _Thread_local static arena_t g_arena;
 
-#include <stdio.h>
+/******************************************************************************
+ * Macro definitions
+ *****************************************************************************/
 
 #ifndef NDEBUG
+#include <stdio.h>
 _Thread_local static int g_is_arena_full;
 _Thread_local static int g_is_arena_init;
 static inline void warn_arena_init() {
@@ -30,14 +67,30 @@ static inline void warn_arena_full() {
 #define WARN_ARENA_INIT
 #endif
 
+/******************************************************************************
+ * Helpers for the test utility
+ *****************************************************************************/
+
+/** For the test utility: Returns a pointer to the global arena.
+ * \return A pointer to the global arena. */
 arena_t *global_arena() {
 	return &g_arena;
 }
 
+/** For the test utility: Resets the global arena to its default 
+ * sate. */
 void reset_global_arena() {
 	memset(&g_arena, 0, sizeof(arena_t));
 }
 
+/******************************************************************************
+ * Public function definitions
+ *****************************************************************************/
+
+/** Allocates memory of 'size' bytes in an internal static buffer or in the 
+ * heap if the buffer is full.
+ * \param size The number of bytes to allocate.
+ * \return A pointer to the allocated memory or NULL on failure. */
 void *mem_alloc(size_t size) {
 	size_t total_size = MEM_OFFSET + ROUNDUP(size, MIN_ALLOC);
 	ptr_t **free_tail = &g_arena.free_ptr_tails[SIZE_CLASS(size)];
@@ -56,6 +109,12 @@ void *mem_alloc(size_t size) {
 	return NULL;
 }
 
+/** Deallocates memory pointed to by 'ptr'.
+ * \param ptr A pointer to the memory to be freed.
+ * \return 0 if heap memory was successfully unmapped,
+ * 1 if the memory was at the end of the internal buffer and therefore 
+ * only the offset was updated, 2 if the memory was in the middle of the
+ * buffer and is now added to the free list, -1 on failure. */
 int mem_free(void *ptr) {
 	if (!ptr) return -1;
 	if (!PTR(ptr)->is_valid) return -1;
@@ -77,6 +136,14 @@ int mem_free(void *ptr) {
 		return 2;
 	}
 }
+
+/** Reallocates the allocated memory pointed to by 'ptr' 
+ * by either shrinking it or expanding it to be 'size' number of bytes. 
+ * \param ptr The pointer to the memory to be resized.
+ * \param size The size of the new allocation in bytes. 
+ * \return A pointer to the new memory location (which may be 
+ * the same as the pointer passed to it in case in-place reallocation was
+ * possible) or NULL on failure. */
 void *mem_realloc(void *ptr, size_t size) {
 	if (!ptr) return NULL;
 	if (!PTR(ptr)->is_valid) return NULL;
