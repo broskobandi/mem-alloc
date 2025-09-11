@@ -8,8 +8,13 @@
 #include <string.h>
 #include <unistd.h>
 
+#define ARENA_SIZE_DEFAULT 1024LU * 128
+#ifndef ARENA_SIZE_MULTIPLIER
 #define ARENA_SIZE\
-	1024LU * 128
+	ARENA_SIZE_DEFAULT
+#else
+#define ARENA_SIZE ARENA_SIZE_DEFAULT * ARENA_SIZE_MULTIPLIER
+#endif
 #define ROUNDUP(size, to)\
 	(((size) + (to) - 1) & ~((to) - 1))
 #define MIN_ALLOC\

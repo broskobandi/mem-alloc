@@ -6,6 +6,14 @@ _Thread_local static arena_t g_arena;
 
 #ifndef NDEBUG
 _Thread_local static int g_is_arena_full;
+_Thread_local static int g_is_arena_init;
+static inline void warn_arena_init() {
+	if (!g_is_arena_init) {
+		g_is_arena_init = 1;
+		printf("[MEM_ALLOC WARNING]:\n");
+		printf("\tFirst use of arena of size %luKB\n", ARENA_SIZE/1024);
+	}
+}
 static inline void warn_arena_full() {
 	if (!g_is_arena_full) {
 		g_is_arena_full = 1;
@@ -13,10 +21,13 @@ static inline void warn_arena_full() {
 		printf("\tUsing mmap from now on.\n");
 	}
 }
+#define WARN_ARENA_INIT\
+	warn_arena_init()
 #define WARN_ARENA_FULL\
 	warn_arena_full()
 #else
 #define WARN_ARENA_FULL
+#define WARN_ARENA_INIT
 #endif
 
 arena_t *global_arena() {
@@ -39,6 +50,7 @@ void *mem_alloc(size_t size) {
 		*free_tail = ptr->prev_free;
 		return ptr->mem;
 	} else {
+		WARN_ARENA_INIT;
 		return use_arena(total_size, &g_arena);
 	}
 	return NULL;

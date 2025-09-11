@@ -3,7 +3,7 @@ PROJECT = mem_alloc
 FIND_CC := $(shell command -v clang || command -v gcc)
 CC := $(FIND_CC)
 CFLAGS := -Wall -Wextra -Werror -Wunused-result -Wconversion
-CPPFLAGS := -Iinclude -Isrc
+CPPFLAGS := -Iinclude -Isrc $(EXTRA_CPPFLAGS)
 
 # Dirs
 BUILD_DIR := build
