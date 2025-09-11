@@ -14,6 +14,7 @@ OBJ_DIR := $(BUILD_DIR)/obj
 LIB_INSTALL_DIR := /usr/local/lib
 INC_INSTALL_DIR := /usr/local/include
 DOC_DIR := doc
+EXAMPLE_DIR := example
 
 # Files
 SRC := $(wildcard $(SRC_DIR)/*.c)
@@ -24,11 +25,13 @@ TEST_EXE := $(BUILD_DIR)/test
 LIB_SO := $(BUILD_DIR)/lib$(PROJECT).so
 LIB_A := $(BUILD_DIR)/lib$(PROJECT).a
 OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+EXAMPLE_MAIN := $(EXAMPLE_DIR)/example.c
+EXAMPLE_EXE := $(BUILD_DIR)/example
 
 # Rules
-.PHONY: all test clean install uninstall doc debug
+.PHONY: all test clean install uninstall doc debug example
 
-all: CPPFLAGS += -DNDEBUG
+all: CPPFLAGS := -DNDEBUG
 all: $(LIB_A) $(LIB_SO)
 
 debug: $(LIB_A) $(LIB_SO)
@@ -37,8 +40,16 @@ test: CC := bear -- $(FIND_CC)
 test: $(TEST_EXE)
 	./$<
 
+example: LDFLAGS := -L/usr/local/lib -lmem_alloc
+example: CFLAGS :=
+example: $(EXAMPLE_EXE)
+	./$<
+
+$(EXAMPLE_EXE): $(EXAMPLE_MAIN) | $(BUILD_DIR)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $^ -o $@ $(LDFLAGS)
+
 clean:
-	rm -rf $(BUILD_DIR) $(DOC_DIR)
+	rm -rf $(BUILD_DIR) $(DOC_DIR) compile_commands.json
 
 install:
 	cp $(LIB_A) $(LIB_INSTALL_DIR)
