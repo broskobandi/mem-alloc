@@ -1,6 +1,7 @@
 # Project
 PROJECT = mem_alloc
-CC := $(shell command -v clang || command -v gcc)
+FIND_CC := $(shell command -v clang || command -v gcc)
+CC := $(FIND_CC)
 CFLAGS := -Wall -Wextra -Werror -Wunused-result -Wconversion
 CPPFLAGS := -Iinclude -Isrc
 
@@ -29,6 +30,7 @@ OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 all: $(LIB_A) $(LIB_SO)
 
+test: CC := bear -- $(FIND_CC)
 test: $(TEST_EXE)
 	./$<
 
@@ -36,9 +38,9 @@ clean:
 	rm -rf $(BUILD_DIR) $(DOC_DIR)
 
 install:
-	cp $(LIB_INSTALL_DIR) $(LIB_A)
-	cp $(LIB_INSTALL_DIR) $(LIB_SO)
-	cp $(INC_INSTALL_DIR) $(INC)
+	cp $(LIB_A) $(LIB_INSTALL_DIR)
+	cp $(LIB_SO) $(LIB_INSTALL_DIR) 
+	cp $(INC) $(INC_INSTALL_DIR)
 	ldconfig
 
 uninstall:
