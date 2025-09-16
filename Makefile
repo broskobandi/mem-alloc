@@ -1,9 +1,5 @@
 # Project
 PROJECT = mem_alloc
-FIND_CC := $(shell command -v clang || command -v gcc)
-CC := $(FIND_CC)
-CFLAGS := -Wall -Wextra -Werror -Wunused-result -Wconversion
-CPPFLAGS := -Iinclude -Isrc $(EXTRA_CPPFLAGS)
 
 # Dirs
 BUILD_DIR := build
@@ -31,17 +27,23 @@ EXAMPLE_EXE := $(BUILD_DIR)/example
 # Rules
 .PHONY: all test clean install uninstall doc debug example
 
-all: CPPFLAGS := -DNDEBUG
+all: CC := gcc
+all: CFLAGS := -O3 -march=native -flto
+all: CPPFLAGS := -Iinclude -DNDEBUG $(EXTRA_CPPFLAGS)
 all: $(LIB_A) $(LIB_SO)
 
-debug: $(LIB_A) $(LIB_SO)
+debug: CC := gcc
+debug: CPPFLAGS := -Iinclude $(EXTRA_CPPFLAGS)
+debug: $(LIB_A) $(LIB_SO) $(EXTRA_CPPFLAGS)
 
-test: CC := bear -- $(FIND_CC)
+test: CC := bear -- clang
+test: CFLAGS := -Wall -Wextra -Werror -Wconversion -Wunused-result
+test: CPPFLAGS := -Iinclude -Isrc
 test: $(TEST_EXE)
 	./$<
 
+example: CC := clang
 example: LDFLAGS := -L/usr/local/lib -lmem_alloc
-example: CFLAGS :=
 example: $(EXAMPLE_EXE)
 	./$<
 
